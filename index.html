@@ -24,15 +24,12 @@
                 extend: {
                     colors: {
                         brand: {
-                            50: '#f0f7ff',
-                            100: '#e0effe',
-                            500: '#2563eb',
-                            800: '#1e3a8a',
-                            900: '#0f172a',
-                            950: '#090d16',
-                        },
-                        income: '#10b981',
-                        expense: '#ef4444'
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#10b981',
+                            600: '#059669',
+                            900: '#064e3b',
+                        }
                     },
                     fontFamily: {
                         sans: ['Hind Siliguri', 'Inter', 'sans-serif'],
@@ -49,27 +46,27 @@
         input, select, textarea { user-select: auto; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 min-h-full flex flex-col font-sans transition-colors duration-200 pb-20">
+<body class="bg-slate-100 text-slate-800 dark:bg-slate-950 dark:text-slate-100 min-h-full flex flex-col font-sans transition-colors duration-200 pb-20">
 
     <!-- TOP STICKY HEADER -->
-    <header class="sticky top-0 z-30 bg-slate-900 text-white shadow-md">
+    <header class="sticky top-0 z-30 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 text-white">
         <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
-            <div class="flex items-center space-x-2">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-blue-600 flex items-center justify-center font-bold text-white shadow-inner">
+            <div class="flex items-center space-x-2.5">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-600 flex items-center justify-center font-bold text-white text-lg shadow-lg shadow-emerald-500/20">
                     ৳
                 </div>
                 <div>
-                    <h1 class="text-base font-bold leading-tight tracking-wide flex items-center gap-1">
-                        HishabPro <span class="text-[10px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded font-mono">v1.1</span>
+                    <h1 class="text-base font-bold leading-tight tracking-wide flex items-center gap-1.5">
+                        HishabPro <span class="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-1.5 py-0.5 rounded-full font-mono font-medium">v2.0</span>
                     </h1>
                     <p class="text-[11px] text-slate-400 leading-tight" id="header-date">--</p>
                 </div>
             </div>
             <div class="flex items-center gap-2">
-                <button onclick="toggleLanguage()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-2.5 py-1 rounded-lg font-medium transition touch-active">
+                <button onclick="toggleLanguage()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-2.5 py-1.5 rounded-xl font-medium transition touch-active">
                     <span id="lang-btn-text">English</span>
                 </button>
-                <button onclick="toggleDarkMode()" class="p-2 bg-slate-800 text-slate-300 hover:text-white rounded-lg border border-slate-700 transition touch-active" aria-label="Toggle Theme">
+                <button onclick="toggleDarkMode()" class="p-2 bg-slate-800 text-slate-300 hover:text-white rounded-xl border border-slate-700 transition touch-active">
                     <i data-lucide="moon" class="w-4 h-4 dark:hidden"></i>
                     <i data-lucide="sun" class="w-4 h-4 hidden dark:block text-amber-400"></i>
                 </button>
@@ -78,7 +75,7 @@
     </header>
 
     <!-- MAIN APP CONTAINER -->
-    <main class="flex-1 max-w-md w-full mx-auto px-4 pt-3 space-y-4">
+    <main class="flex-1 max-w-md w-full mx-auto px-4 pt-4 space-y-4">
 
         <!-- BUDGET ALERTS BANNER CONTAINER -->
         <div id="budget-alerts-container" class="space-y-2"></div>
@@ -87,90 +84,90 @@
         <section id="view-dashboard" class="space-y-4">
             <div class="flex items-center justify-between">
                 <div>
-                    <h2 class="text-sm font-semibold text-slate-500 dark:text-slate-400" id="txt-greeting">আসসালামু আলাইকুম</h2>
-                    <p class="text-lg font-bold text-slate-800 dark:text-white" id="user-display-name">ব্যবহারকারী</p>
+                    <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400" id="txt-greeting">আসসালামু আলাইকুম</h2>
+                    <p class="text-xl font-bold text-slate-800 dark:text-white" id="user-display-name">ব্যবহারকারী</p>
                 </div>
-                <button onclick="openSetupModal()" class="text-xs text-blue-600 dark:text-blue-400 flex items-center gap-1 font-medium bg-blue-50 dark:bg-slate-800 px-2.5 py-1.5 rounded-lg border border-blue-100 dark:border-slate-700">
+                <button onclick="openSetupModal()" class="text-xs text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5 font-semibold bg-emerald-50 dark:bg-emerald-950/40 px-3 py-1.5 rounded-xl border border-emerald-200 dark:border-emerald-800/50 touch-active">
                     <i data-lucide="sliders" class="w-3.5 h-3.5"></i>
                     <span id="txt-balance-setup">ব্যালেন্স সেটআপ</span>
                 </button>
             </div>
 
             <!-- MAIN BALANCE CARD -->
-            <div class="bg-gradient-to-br from-slate-900 via-slate-850 to-slate-800 text-white rounded-2xl p-5 shadow-xl relative overflow-hidden border border-slate-700/50">
-                <div class="absolute -right-6 -bottom-6 w-28 h-28 bg-emerald-500/10 rounded-full blur-xl pointer-events-none"></div>
-                <div class="flex justify-between items-start mb-2">
-                    <span class="text-xs font-medium text-slate-400 uppercase tracking-wider" id="txt-current-balance">বর্তমান ব্যালেন্স</span>
-                    <button onclick="toggleHideBalance()" class="p-1 text-slate-400 hover:text-white rounded-md transition" aria-label="Show/Hide balance">
+            <div class="bg-gradient-to-br from-slate-900 via-slate-850 to-slate-950 text-white rounded-3xl p-6 shadow-2xl relative overflow-hidden border border-slate-800">
+                <div class="absolute -right-8 -bottom-8 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
+                <div class="flex justify-between items-start mb-1">
+                    <span class="text-xs font-medium text-slate-400 uppercase tracking-widest" id="txt-current-balance">বর্তমান ব্যালেন্স</span>
+                    <button onclick="toggleHideBalance()" class="p-1.5 text-slate-400 hover:text-white rounded-lg transition" aria-label="Show/Hide balance">
                         <i id="eye-icon" data-lucide="eye" class="w-4 h-4"></i>
                     </button>
                 </div>
-                <div class="text-3xl font-bold font-mono tracking-tight my-1 text-emerald-400" id="dash-net-balance">
+                <div class="text-3xl font-extrabold font-mono tracking-tight my-2 text-emerald-400" id="dash-net-balance">
                     ৳ 0.00
                 </div>
 
-                <div class="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-slate-700/70 text-center">
-                    <div class="bg-slate-800/60 p-2 rounded-xl">
-                        <p class="text-[10px] text-slate-400" id="txt-total-income">মোট আয়</p>
-                        <p class="text-xs font-semibold text-emerald-400 font-mono mt-0.5" id="dash-total-income">৳ 0</p>
+                <div class="grid grid-cols-3 gap-2 mt-5 pt-4 border-t border-slate-800 text-center">
+                    <div class="bg-slate-800/40 backdrop-blur-sm p-2.5 rounded-2xl border border-slate-700/30">
+                        <p class="text-[10px] text-slate-400 font-medium" id="txt-total-income">মোট আয়</p>
+                        <p class="text-xs font-bold text-emerald-400 font-mono mt-0.5" id="dash-total-income">৳ 0</p>
                     </div>
-                    <div class="bg-slate-800/60 p-2 rounded-xl">
-                        <p class="text-[10px] text-slate-400" id="txt-total-expense">মোট খরচ</p>
-                        <p class="text-xs font-semibold text-red-400 font-mono mt-0.5" id="dash-total-expense">৳ 0</p>
+                    <div class="bg-slate-800/40 backdrop-blur-sm p-2.5 rounded-2xl border border-slate-700/30">
+                        <p class="text-[10px] text-slate-400 font-medium" id="txt-total-expense">মোট খরচ</p>
+                        <p class="text-xs font-bold text-rose-400 font-mono mt-0.5" id="dash-total-expense">৳ 0</p>
                     </div>
-                    <div class="bg-slate-800/60 p-2 rounded-xl">
-                        <p class="text-[10px] text-slate-400" id="txt-today-expense">আজকের খরচ</p>
-                        <p class="text-xs font-semibold text-amber-400 font-mono mt-0.5" id="dash-today-expense">৳ 0</p>
+                    <div class="bg-slate-800/40 backdrop-blur-sm p-2.5 rounded-2xl border border-slate-700/30">
+                        <p class="text-[10px] text-slate-400 font-medium" id="txt-today-expense">আজকের খরচ</p>
+                        <p class="text-xs font-bold text-amber-400 font-mono mt-0.5" id="dash-today-expense">৳ 0</p>
                     </div>
                 </div>
             </div>
 
             <!-- QUICK ACTION BUTTONS -->
             <div class="grid grid-cols-2 gap-3">
-                <button onclick="openAddModal('expense')" class="flex items-center justify-center gap-2 py-3 px-4 bg-red-500 hover:bg-red-600 text-white font-medium rounded-xl shadow-sm touch-active transition">
+                <button onclick="openAddModal('expense')" class="flex items-center justify-center gap-2 py-3.5 px-4 bg-rose-600 hover:bg-rose-700 text-white font-semibold rounded-2xl shadow-lg shadow-rose-600/20 touch-active transition">
                     <i data-lucide="minus-circle" class="w-5 h-5"></i>
                     <span id="txt-btn-quick-expense">খরচ যোগ করুন</span>
                 </button>
-                <button onclick="openAddModal('income')" class="flex items-center justify-center gap-2 py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-xl shadow-sm touch-active transition">
+                <button onclick="openAddModal('income')" class="flex items-center justify-center gap-2 py-3.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-2xl shadow-lg shadow-emerald-600/20 touch-active transition">
                     <i data-lucide="plus-circle" class="w-5 h-5"></i>
                     <span id="txt-btn-quick-income">আয় যোগ করুন</span>
                 </button>
             </div>
 
             <!-- DAILY BUDGET PROGRESS -->
-            <div class="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200/80 dark:border-slate-700 space-y-2">
+            <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 shadow-sm border border-slate-200/80 dark:border-slate-800 space-y-2.5">
                 <div class="flex justify-between items-center text-xs">
-                    <span class="font-semibold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
-                        <i data-lucide="target" class="w-4 h-4 text-blue-500"></i>
+                    <span class="font-bold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
+                        <i data-lucide="target" class="w-4 h-4 text-emerald-500"></i>
                         <span id="txt-daily-limit-title">আজকের খরচের সীমা</span>
                     </span>
-                    <span class="font-mono text-slate-500 dark:text-slate-400" id="dash-daily-budget-text">৳ 0 / ৳ 0</span>
+                    <span class="font-mono text-slate-500 dark:text-slate-400 font-semibold" id="dash-daily-budget-text">৳ 0 / ৳ 0</span>
                 </div>
-                <div class="w-full bg-slate-100 dark:bg-slate-700 h-2.5 rounded-full overflow-hidden">
-                    <div id="dash-daily-budget-bar" class="bg-blue-500 h-full transition-all duration-300" style="width: 0%"></div>
+                <div class="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                    <div id="dash-daily-budget-bar" class="bg-emerald-500 h-full transition-all duration-300" style="width: 0%"></div>
                 </div>
-                <p class="text-[11px] text-slate-500 dark:text-slate-400 flex justify-between" id="dash-daily-remaining-text">
+                <p class="text-[11px] text-slate-500 dark:text-slate-400 flex justify-between font-medium" id="dash-daily-remaining-text">
                     <span>অবশিষ্ট budget: ৳ 0</span>
                     <span id="dash-daily-budget-pct">0% used</span>
                 </p>
             </div>
 
             <!-- WALLET BREAKDOWN -->
-            <div class="space-y-2">
+            <div class="space-y-2.5">
                 <div class="flex justify-between items-center">
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400" id="txt-wallets-header">ওয়ালেট ব্যালেন্স</h3>
-                    <button onclick="openAddModal('transfer')" class="text-xs text-blue-600 dark:text-blue-400 font-semibold flex items-center gap-1">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400" id="txt-wallets-header">ওয়ালেট ব্যালেন্স</h3>
+                    <button onclick="openAddModal('transfer')" class="text-xs text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
                         <i data-lucide="arrow-left-right" class="w-3.5 h-3.5"></i> <span id="txt-btn-transfer">টাকা স্থানান্তর</span>
                     </button>
                 </div>
-                <div class="grid grid-cols-2 gap-2" id="wallet-cards-grid"></div>
+                <div class="grid grid-cols-2 gap-2.5" id="wallet-cards-grid"></div>
             </div>
 
             <!-- RECENT TRANSACTIONS -->
-            <div class="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200/80 dark:border-slate-700 space-y-3">
-                <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-700/60 pb-2">
+            <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 shadow-sm border border-slate-200/80 dark:border-slate-800 space-y-3">
+                <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-3">
                     <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100" id="txt-recent-txns">সাম্প্রতিক লেনদেন</h3>
-                    <button onclick="switchTab('transactions')" class="text-xs text-blue-600 dark:text-blue-400 font-medium hover:underline" id="txt-see-all">সব দেখুন</button>
+                    <button onclick="switchTab('transactions')" class="text-xs text-emerald-600 dark:text-emerald-400 font-semibold hover:underline" id="txt-see-all">সব দেখুন</button>
                 </div>
                 <div id="dashboard-recent-list" class="space-y-2"></div>
             </div>
@@ -180,24 +177,24 @@
         <section id="view-transactions" class="space-y-3 hidden">
             <div class="flex items-center justify-between">
                 <h2 class="text-lg font-bold" id="txt-ledger-title">লেনদেন বিবরণী</h2>
-                <span class="text-xs text-slate-500 bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded-full font-mono" id="tx-count-badge">0 টি</span>
+                <span class="text-xs text-slate-600 dark:text-slate-300 bg-slate-200 dark:bg-slate-800 px-2.5 py-1 rounded-full font-mono font-medium" id="tx-count-badge">0 টি</span>
             </div>
 
             <!-- SEARCH & FILTERS -->
-            <div class="bg-white dark:bg-slate-800 p-3 rounded-xl shadow-sm border border-slate-200/80 dark:border-slate-700 space-y-2">
+            <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl shadow-sm border border-slate-200/80 dark:border-slate-800 space-y-2.5">
                 <div class="relative">
-                    <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-slate-400"></i>
-                    <input type="text" id="tx-search-input" oninput="renderTransactions()" placeholder="খুঁজুন (নোট, ক্যাটাগরি, পরিমাণ)..." class="w-full text-xs pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500">
+                    <i data-lucide="search" class="w-4 h-4 absolute left-3 top-3 text-slate-400"></i>
+                    <input type="text" id="tx-search-input" oninput="renderTransactions()" placeholder="খুঁজুন (নোট, ক্যাটাগরি, পরিমাণ)..." class="w-full text-xs pl-9 pr-3 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500">
                 </div>
                 <div class="grid grid-cols-2 gap-2 text-xs">
-                    <select id="tx-filter-date" onchange="renderTransactions()" class="p-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg font-medium">
+                    <select id="tx-filter-date" onchange="renderTransactions()" class="p-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl font-medium">
                         <option value="all">সব সময় (All)</option>
                         <option value="today" selected>আজ (Today)</option>
                         <option value="yesterday">গতকাল (Yesterday)</option>
                         <option value="week">এই সপ্তাহ (This Week)</option>
                         <option value="month">এই মাস (This Month)</option>
                     </select>
-                    <select id="tx-filter-type" onchange="renderTransactions()" class="p-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg font-medium">
+                    <select id="tx-filter-type" onchange="renderTransactions()" class="p-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl font-medium">
                         <option value="all">সব ধরনের লেনদেন</option>
                         <option value="expense">শুধু খরচ (Expense)</option>
                         <option value="income">শুধু আয় (Income)</option>
@@ -205,15 +202,15 @@
                     </select>
                 </div>
                 <div class="grid grid-cols-2 gap-2 text-xs">
-                    <select id="tx-filter-wallet" onchange="renderTransactions()" class="p-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg font-medium">
+                    <select id="tx-filter-wallet" onchange="renderTransactions()" class="p-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl font-medium">
                         <option value="all">সব ওয়ালেট/অ্যাকাউন্ট</option>
                         <option value="cash">নগদ (Cash)</option>
                         <option value="bkash">বিকাশ (bKash)</option>
-                        <option value="nagad">নগদ (Nagad)</option>
+                        <option value="nagad">নগদ অ্যাপ (Nagad)</option>
                         <option value="rocket">রকেট (Rocket)</option>
                         <option value="bank">ব্যাংক (Bank)</option>
                     </select>
-                    <select id="tx-sort-order" onchange="renderTransactions()" class="p-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg font-medium">
+                    <select id="tx-sort-order" onchange="renderTransactions()" class="p-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl font-medium">
                         <option value="newest">সর্বশেষ আগে</option>
                         <option value="oldest">পুরাতন আগে</option>
                         <option value="highest">সর্বোচ্চ পরিমাণ</option>
@@ -223,68 +220,68 @@
             </div>
 
             <!-- LEDGER TRANSACTION LIST -->
-            <div id="tx-ledger-list" class="space-y-3"></div>
+            <div id="tx-ledger-list" class="space-y-2.5"></div>
         </section>
 
-        <!-- VIEW 3: REPORTS & ANALYTICS & STATEMENT DOWNLOAD (রিপোর্ট ও স্টেটমেন্ট) -->
+        <!-- VIEW 3: REPORTS & ANALYTICS & STATEMENT DOWNLOAD -->
         <section id="view-reports" class="space-y-4 hidden">
             <div class="flex items-center justify-between">
                 <h2 class="text-lg font-bold" id="txt-reports-title">আর্থিক রিপোর্ট ও স্টেটমেন্ট</h2>
-                <select id="report-period" onchange="renderReports()" class="text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-lg">
+                <select id="report-period" onchange="renderReports()" class="text-xs bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-3 py-1.5 rounded-xl font-medium">
                     <option value="this-month" selected>এই মাস</option>
                     <option value="all-time">সর্বমোট</option>
                 </select>
             </div>
 
-            <!-- DETAILED STATEMENT DOWNLOAD PANEL -->
-            <div class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-4 rounded-xl shadow-md space-y-3">
+            <!-- STATEMENT DOWNLOAD PANEL -->
+            <div class="bg-gradient-to-br from-emerald-600 to-teal-800 text-white p-4 rounded-2xl shadow-lg space-y-3">
                 <div class="flex items-center justify-between">
                     <div>
                         <h3 class="text-sm font-bold flex items-center gap-1.5">
                             <i data-lucide="file-text" class="w-4 h-4"></i>
                             <span>ডিটেইলড স্টেটমেন্ট ডাউনলোড</span>
                         </h3>
-                        <p class="text-[11px] text-blue-100">যে কোনো সময়ের পূর্ণাঙ্গ হিসাব প্রিন্ট বা ডাউনলোড করুন</p>
+                        <p class="text-[11px] text-emerald-100 mt-0.5">যে কোনো সময়ের পূর্ণাঙ্গ হিসাব প্রিন্ট বা ডাউনলোড করুন</p>
                     </div>
                 </div>
                 <div class="grid grid-cols-3 gap-2 pt-1">
-                    <button onclick="downloadStatementPDF()" class="bg-white/15 hover:bg-white/25 text-white text-xs py-2 px-2 rounded-lg font-medium border border-white/25 flex items-center justify-center gap-1 transition touch-active">
+                    <button onclick="downloadStatementPDF()" class="bg-white/15 hover:bg-white/25 text-white text-xs py-2 px-2 rounded-xl font-medium border border-white/20 flex items-center justify-center gap-1 transition touch-active">
                         <i data-lucide="download" class="w-3.5 h-3.5"></i> PDF
                     </button>
-                    <button onclick="printStatement()" class="bg-white/15 hover:bg-white/25 text-white text-xs py-2 px-2 rounded-lg font-medium border border-white/25 flex items-center justify-center gap-1 transition touch-active">
+                    <button onclick="printStatement()" class="bg-white/15 hover:bg-white/25 text-white text-xs py-2 px-2 rounded-xl font-medium border border-white/20 flex items-center justify-center gap-1 transition touch-active">
                         <i data-lucide="printer" class="w-3.5 h-3.5"></i> Print
                     </button>
-                    <button onclick="downloadStatementJPG()" class="bg-white/15 hover:bg-white/25 text-white text-xs py-2 px-2 rounded-lg font-medium border border-white/25 flex items-center justify-center gap-1 transition touch-active">
+                    <button onclick="downloadStatementJPG()" class="bg-white/15 hover:bg-white/25 text-white text-xs py-2 px-2 rounded-xl font-medium border border-white/20 flex items-center justify-center gap-1 transition touch-active">
                         <i data-lucide="image" class="w-3.5 h-3.5"></i> JPG
                     </button>
                 </div>
             </div>
 
             <!-- STAT SUMMARY CARDS -->
-            <div class="grid grid-cols-2 gap-2 text-center">
-                <div class="bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-200/80 dark:border-slate-700">
-                    <p class="text-[11px] text-slate-500" id="txt-net-cashflow">নেট ক্যাশ-ফ্লো</p>
+            <div class="grid grid-cols-2 gap-2.5 text-center">
+                <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-800">
+                    <p class="text-[11px] text-slate-400 font-medium" id="txt-net-cashflow">নেট ক্যাশ-ফ্লো</p>
                     <p class="text-sm font-bold font-mono mt-0.5" id="rep-net-flow">৳ 0</p>
                 </div>
-                <div class="bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-200/80 dark:border-slate-700">
-                    <p class="text-[11px] text-slate-500" id="txt-daily-avg">দৈনিক গড় খরচ</p>
-                    <p class="text-sm font-bold font-mono text-red-500 mt-0.5" id="rep-daily-avg">৳ 0</p>
+                <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-800">
+                    <p class="text-[11px] text-slate-400 font-medium" id="txt-daily-avg">দৈনিক গড় খরচ</p>
+                    <p class="text-sm font-bold font-mono text-rose-500 mt-0.5" id="rep-daily-avg">৳ 0</p>
                 </div>
             </div>
 
             <!-- CHART: CATEGORY EXPENSE BREAKDOWN -->
-            <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200/80 dark:border-slate-700 space-y-3">
-                <h3 class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider" id="txt-category-chart">খাতভিত্তিক খরচ</h3>
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-3">
+                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider" id="txt-category-chart">খাতভিত্তিক খরচ</h3>
                 <div class="h-52 relative flex items-center justify-center">
                     <canvas id="categoryDoughnutChart"></canvas>
                 </div>
-                <div id="rep-category-legend" class="text-xs space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-700"></div>
+                <div id="rep-category-legend" class="text-xs space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800"></div>
             </div>
 
             <!-- CHART: PAYMENT METHOD USAGE -->
-            <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200/80 dark:border-slate-700 space-y-3">
-                <h3 class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider" id="txt-wallet-usage">পেমেন্ট মেথড ব্যবহার</h3>
-                <div id="rep-wallet-breakdown" class="space-y-2 text-xs"></div>
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-3">
+                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider" id="txt-wallet-usage">পেমেন্ট মেথড ব্যবহার</h3>
+                <div id="rep-wallet-breakdown" class="space-y-2.5 text-xs"></div>
             </div>
         </section>
 
@@ -292,46 +289,46 @@
         <section id="view-settings" class="space-y-4 hidden">
             <h2 class="text-lg font-bold" id="txt-settings-title">সেটিংস ও বাজেট</h2>
 
-            <!-- DEVELOPER / WEBSITE LINK -->
-            <div class="bg-gradient-to-r from-slate-900 to-blue-950 text-white p-4 rounded-xl shadow-md flex items-center justify-between">
-                <div class="space-y-1">
-                    <p class="text-[11px] text-blue-300 font-semibold uppercase tracking-wider">Developer Portfolio</p>
+            <!-- DEVELOPER LINK -->
+            <div class="bg-slate-900 text-white p-4 rounded-2xl shadow-lg flex items-center justify-between border border-slate-800">
+                <div class="space-y-0.5">
+                    <p class="text-[10px] text-emerald-400 font-semibold uppercase tracking-wider">Developer Portfolio</p>
                     <p class="text-sm font-bold">Salman Farshi</p>
                 </div>
-                <a href="https://salmanfarshi1630.github.io" target="_blank" class="px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg shadow transition flex items-center gap-1.5 touch-active">
+                <a href="https://salmanfarshi1630.github.io" target="_blank" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-xl transition flex items-center gap-1.5 touch-active">
                     <i data-lucide="external-link" class="w-3.5 h-3.5"></i> ভিজিট ওয়েবসাইট
                 </a>
             </div>
 
             <!-- PROFILE & PREFERENCES -->
-            <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200/80 dark:border-slate-700 space-y-3">
-                <h3 class="text-sm font-bold border-b border-slate-100 dark:border-slate-700 pb-2" id="txt-pref-header">ব্যক্তিগত তথ্য ও বাজেট লিমিট</h3>
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-3">
+                <h3 class="text-sm font-bold border-b border-slate-100 dark:border-slate-800 pb-2.5" id="txt-pref-header">ব্যক্তিগত তথ্য ও বাজেট লিমিট</h3>
                 <div class="space-y-3 text-xs">
                     <div>
-                        <label class="block font-medium mb-1" id="lbl-user-name">আপনার নাম</label>
-                        <input type="text" id="cfg-user-name" class="w-full p-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg">
+                        <label class="block font-medium mb-1.5" id="lbl-user-name">আপনার নাম</label>
+                        <input type="text" id="cfg-user-name" class="w-full p-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl">
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         <div>
-                            <label class="block font-medium mb-1" id="lbl-daily-limit">দৈনিক খরচের সীমা (৳)</label>
-                            <input type="number" id="cfg-daily-limit" class="w-full p-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg font-mono">
+                            <label class="block font-medium mb-1.5" id="lbl-daily-limit">দৈনিক খরচের সীমা (৳)</label>
+                            <input type="number" id="cfg-daily-limit" class="w-full p-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl font-mono">
                         </div>
                         <div>
-                            <label class="block font-medium mb-1" id="lbl-monthly-limit">মাসিক বাজেট (৳)</label>
-                            <input type="number" id="cfg-monthly-limit" class="w-full p-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg font-mono">
+                            <label class="block font-medium mb-1.5" id="lbl-monthly-limit">মাসিক বাজেট (৳)</label>
+                            <input type="number" id="cfg-monthly-limit" class="w-full p-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl font-mono">
                         </div>
                     </div>
-                    <button onclick="saveSettings()" class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition touch-active" id="btn-save-settings">
+                    <button onclick="saveSettings()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition touch-active shadow-md shadow-emerald-600/20" id="btn-save-settings">
                         সংরক্ষণ করুন
                     </button>
                 </div>
             </div>
 
             <!-- SAVINGS GOALS -->
-            <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200/80 dark:border-slate-700 space-y-3">
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-3">
                 <div class="flex justify-between items-center">
                     <h3 class="text-sm font-bold" id="txt-savings-goals-title">সঞ্চয় লক্ষ্য (Savings Goals)</h3>
-                    <button onclick="openGoalModal()" class="text-xs text-blue-600 dark:text-blue-400 font-semibold flex items-center gap-1">
+                    <button onclick="openGoalModal()" class="text-xs text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
                         <i data-lucide="plus" class="w-3.5 h-3.5"></i> <span id="txt-add-goal">নতুন লক্ষ্য</span>
                     </button>
                 </div>
@@ -339,33 +336,30 @@
             </div>
 
             <!-- BACKUP, RESTORE & EXPORT -->
-            <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200/80 dark:border-slate-700 space-y-3">
-                <h3 class="text-sm font-bold border-b border-slate-100 dark:border-slate-700 pb-2" id="txt-data-mgnt">ডাটা ব্যাকআপ ও এক্সপোর্ট</h3>
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-3">
+                <h3 class="text-sm font-bold border-b border-slate-100 dark:border-slate-800 pb-2.5" id="txt-data-mgnt">ডাটা ব্যাকআপ ও এক্সপোর্ট</h3>
                 <div class="grid grid-cols-2 gap-2 text-xs">
-                    <button onclick="exportCSV()" class="flex items-center justify-center gap-1.5 p-2.5 bg-emerald-50 dark:bg-slate-700 text-emerald-700 dark:text-emerald-300 font-medium rounded-lg border border-emerald-200 dark:border-slate-600 touch-active">
+                    <button onclick="exportCSV()" class="flex items-center justify-center gap-1.5 p-2.5 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 font-medium rounded-xl border border-emerald-200 dark:border-emerald-800/50 touch-active">
                         <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
                         <span>CSV এক্সপোর্ট</span>
                     </button>
-                    <button onclick="exportJSONBackup()" class="flex items-center justify-center gap-1.5 p-2.5 bg-blue-50 dark:bg-slate-700 text-blue-700 dark:text-blue-300 font-medium rounded-lg border border-blue-200 dark:border-slate-600 touch-active">
+                    <button onclick="exportJSONBackup()" class="flex items-center justify-center gap-1.5 p-2.5 bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 font-medium rounded-xl border border-blue-200 dark:border-blue-800/50 touch-active">
                         <i data-lucide="download" class="w-4 h-4"></i>
                         <span>JSON ব্যাকআপ</span>
                     </button>
                 </div>
                 <div class="text-xs space-y-2 pt-1">
                     <label class="block font-medium" id="lbl-restore">ব্যাকআপ ফাইল রিস্টোর করুন (JSON):</label>
-                    <input type="file" id="import-file-input" accept=".json" onchange="importJSONBackup(event)" class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 dark:file:bg-slate-700 dark:file:text-slate-300">
+                    <input type="file" id="import-file-input" accept=".json" onchange="importJSONBackup(event)" class="w-full text-xs text-slate-500 file:mr-2 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-700 dark:file:bg-slate-800 dark:file:text-slate-300">
                 </div>
             </div>
 
             <!-- DANGER ZONE -->
-            <div class="bg-red-50 dark:bg-red-950/30 p-4 rounded-xl border border-red-200 dark:border-red-900/50 space-y-2">
-                <h3 class="text-xs font-bold text-red-700 dark:text-red-400 uppercase tracking-wider" id="txt-danger-zone">বিপজ্জনক অঞ্চল</h3>
-                <p class="text-[11px] text-red-600/80 dark:text-red-300" id="txt-reset-desc">আপনার সকল হিসাব, লেনদেন এবং সেটিংস মুছে নতুন করে শুরু করতে চান?</p>
-                <div class="flex gap-2">
-                    <button onclick="loadSampleData()" class="px-3 py-1.5 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-medium rounded-lg">
-                        নমুনা ডাটা লোড করুন
-                    </button>
-                    <button onclick="resetAllData()" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-lg touch-active">
+            <div class="bg-rose-50 dark:bg-rose-950/20 p-4 rounded-2xl border border-rose-200 dark:border-rose-900/40 space-y-2">
+                <h3 class="text-xs font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider" id="txt-danger-zone">বিপজ্জনক অঞ্চল</h3>
+                <p class="text-[11px] text-rose-600/80 dark:text-rose-300" id="txt-reset-desc">আপনার সকল হিসাব, লেনদেন এবং সেটিংস মুছে নতুন করে শুরু করতে চান?</p>
+                <div>
+                    <button onclick="resetAllData()" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold rounded-xl touch-active shadow-md shadow-rose-600/20">
                         সকল তথ্য মুছে ফেলুন
                     </button>
                 </div>
@@ -382,20 +376,20 @@
                 <p class="text-xs text-slate-500">হাতখরচ ও আর্থিক হিসাব বিবরণী</p>
             </div>
             <div class="text-right text-xs">
-                <p class="font-bold" id="stmt-user-name">ব্যবহারকারী: শিক্ষার্থী</p>
+                <p class="font-bold" id="stmt-user-name">ব্যবহারকারী: ব্যবহারকারী</p>
                 <p class="text-slate-500" id="stmt-date-range">তারিখ: অদ্যবধি</p>
             </div>
         </div>
         <div class="grid grid-cols-3 gap-4 mb-6 text-center text-xs">
-            <div class="bg-slate-100 p-3 rounded-lg">
+            <div class="bg-slate-100 p-3 rounded-xl">
                 <p class="text-slate-500">মোট আয়</p>
                 <p class="text-sm font-bold text-emerald-600 font-mono" id="stmt-total-inc">৳ 0</p>
             </div>
-            <div class="bg-slate-100 p-3 rounded-lg">
+            <div class="bg-slate-100 p-3 rounded-xl">
                 <p class="text-slate-500">মোট খরচ</p>
-                <p class="text-sm font-bold text-red-600 font-mono" id="stmt-total-exp">৳ 0</p>
+                <p class="text-sm font-bold text-rose-600 font-mono" id="stmt-total-exp">৳ 0</p>
             </div>
-            <div class="bg-slate-100 p-3 rounded-lg">
+            <div class="bg-slate-100 p-3 rounded-xl">
                 <p class="text-slate-500">নেট ব্যালেন্স</p>
                 <p class="text-sm font-bold text-blue-600 font-mono" id="stmt-net-bal">৳ 0</p>
             </div>
@@ -418,9 +412,9 @@
     </div>
 
     <!-- FIXED MOBILE BOTTOM NAVIGATION BAR -->
-    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 shadow-lg">
+    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 shadow-lg">
         <div class="max-w-md mx-auto grid grid-cols-5 h-16 px-1">
-            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="flex flex-col items-center justify-center text-blue-600 dark:text-blue-400 touch-active">
+            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="flex flex-col items-center justify-center text-emerald-600 dark:text-emerald-400 touch-active font-semibold">
                 <i data-lucide="home" class="w-5 h-5"></i>
                 <span class="text-[10px] font-medium mt-1" id="nav-txt-home">হোম</span>
             </button>
@@ -429,7 +423,7 @@
                 <span class="text-[10px] font-medium mt-1" id="nav-txt-ledger">হিসাব</span>
             </button>
             <div class="flex items-center justify-center">
-                <button onclick="openAddModal('expense')" class="w-12 h-12 rounded-full bg-gradient-to-tr from-emerald-500 to-blue-600 text-white flex items-center justify-center shadow-lg hover:opacity-95 touch-active -mt-5 border-4 border-slate-50 dark:border-slate-900">
+                <button onclick="openAddModal('expense')" class="w-12 h-12 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-600 text-white flex items-center justify-center shadow-lg hover:opacity-95 touch-active -mt-6 border-4 border-slate-100 dark:border-slate-950">
                     <i data-lucide="plus" class="w-6 h-6 stroke-[2.5]"></i>
                 </button>
             </div>
@@ -445,42 +439,42 @@
     </nav>
 
     <!-- MODAL 1: ADD / EDIT TRANSACTION -->
-    <div id="modal-tx" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
-        <div class="bg-white dark:bg-slate-800 w-full max-w-md rounded-t-2xl sm:rounded-2xl max-h-[90vh] overflow-y-auto p-5 space-y-4 shadow-2xl">
-            <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-700 pb-3">
+    <div id="modal-tx" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-3xl sm:rounded-3xl max-h-[90vh] overflow-y-auto p-5 space-y-4 shadow-2xl border border-slate-100 dark:border-slate-800">
+            <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-3">
                 <h3 class="text-base font-bold text-slate-800 dark:text-white" id="tx-modal-title">লেনদেন যোগ করুন</h3>
                 <button onclick="closeModal('modal-tx')" class="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-white">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
 
-            <div class="grid grid-cols-3 gap-1 bg-slate-100 dark:bg-slate-900 p-1 rounded-xl text-xs font-semibold">
-                <button type="button" onclick="setTxType('expense')" id="type-btn-expense" class="py-2 rounded-lg text-slate-600 dark:text-slate-300">খরচ</button>
-                <button type="button" onclick="setTxType('income')" id="type-btn-income" class="py-2 rounded-lg text-slate-600 dark:text-slate-300">আয়</button>
-                <button type="button" onclick="setTxType('transfer')" id="type-btn-transfer" class="py-2 rounded-lg text-slate-600 dark:text-slate-300">স্থানান্তর</button>
+            <div class="grid grid-cols-3 gap-1 bg-slate-100 dark:bg-slate-950 p-1 rounded-2xl text-xs font-semibold">
+                <button type="button" onclick="setTxType('expense')" id="type-btn-expense" class="py-2.5 rounded-xl text-slate-600 dark:text-slate-300">খরচ</button>
+                <button type="button" onclick="setTxType('income')" id="type-btn-income" class="py-2.5 rounded-xl text-slate-600 dark:text-slate-300">আয়</button>
+                <button type="button" onclick="setTxType('transfer')" id="type-btn-transfer" class="py-2.5 rounded-xl text-slate-600 dark:text-slate-300">স্থানান্তর</button>
             </div>
 
             <form id="tx-form" onsubmit="handleTxSubmit(event)" class="space-y-3">
                 <input type="hidden" id="tx-id">
                 <div>
-                    <label class="block text-xs font-semibold mb-1" id="lbl-amount">পরিমাণ (BDT ৳)</label>
+                    <label class="block text-xs font-semibold mb-1.5" id="lbl-amount">পরিমাণ (BDT ৳)</label>
                     <div class="relative">
-                        <span class="absolute left-3 top-2.5 text-lg font-bold text-slate-400">৳</span>
-                        <input type="number" step="0.01" id="tx-amount" required placeholder="0.00" class="w-full text-2xl font-bold font-mono pl-8 pr-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <span class="absolute left-3.5 top-2.5 text-lg font-bold text-slate-400">৳</span>
+                        <input type="number" step="0.01" id="tx-amount" required placeholder="0.00" class="w-full text-2xl font-bold font-mono pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                     </div>
                 </div>
 
                 <div id="field-category-wrapper">
-                    <label class="block text-xs font-semibold mb-1" id="lbl-category">ক্যাটাগরি</label>
-                    <select id="tx-category" class="w-full p-2.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl"></select>
+                    <label class="block text-xs font-semibold mb-1.5" id="lbl-category">ক্যাটাগরি</label>
+                    <select id="tx-category" class="w-full p-3 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl"></select>
                 </div>
 
                 <div id="wallet-select-standard">
-                    <label class="block text-xs font-semibold mb-1" id="lbl-wallet">ওয়ালেট / পেমেন্ট মেথড</label>
-                    <select id="tx-wallet" class="w-full p-2.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl">
+                    <label class="block text-xs font-semibold mb-1.5" id="lbl-wallet">ওয়ালেট / পেমেন্ট মেথড</label>
+                    <select id="tx-wallet" class="w-full p-3 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl">
                         <option value="cash">নগদ (Cash)</option>
                         <option value="bkash">বিকাশ (bKash)</option>
-                        <option value="nagad">নগদ (Nagad)</option>
+                        <option value="nagad">নগদ অ্যাপ (Nagad)</option>
                         <option value="rocket">রকেট (Rocket)</option>
                         <option value="bank">ব্যাংক (Bank)</option>
                     </select>
@@ -488,21 +482,21 @@
 
                 <div id="wallet-select-transfer" class="grid grid-cols-2 gap-2 hidden">
                     <div>
-                        <label class="block text-xs font-semibold mb-1">কোথা হতে (From)</label>
-                        <select id="tx-from-wallet" class="w-full p-2 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl">
+                        <label class="block text-xs font-semibold mb-1.5">কোথা হতে (From)</label>
+                        <select id="tx-from-wallet" class="w-full p-2.5 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl">
                             <option value="cash">নগদ (Cash)</option>
                             <option value="bkash">বিকাশ (bKash)</option>
-                            <option value="nagad">নগদ (Nagad)</option>
+                            <option value="nagad">নগদ অ্যাপ (Nagad)</option>
                             <option value="rocket">রকেট (Rocket)</option>
                             <option value="bank">ব্যাংক (Bank)</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold mb-1">কোথায় (To)</label>
-                        <select id="tx-to-wallet" class="w-full p-2 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl">
+                        <label class="block text-xs font-semibold mb-1.5">কোথায় (To)</label>
+                        <select id="tx-to-wallet" class="w-full p-2.5 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl">
                             <option value="bkash">বিকাশ (bKash)</option>
                             <option value="cash">নগদ (Cash)</option>
-                            <option value="nagad">নগদ (Nagad)</option>
+                            <option value="nagad">নগদ অ্যাপ (Nagad)</option>
                             <option value="rocket">রকেট (Rocket)</option>
                             <option value="bank">ব্যাংক (Bank)</option>
                         </select>
@@ -511,21 +505,21 @@
 
                 <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="block text-xs font-semibold mb-1" id="lbl-date">তারিখ</label>
-                        <input type="date" id="tx-date" required class="w-full p-2 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl">
+                        <label class="block text-xs font-semibold mb-1.5" id="lbl-date">তারিখ</label>
+                        <input type="date" id="tx-date" required class="w-full p-2.5 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold mb-1" id="lbl-time">সময়</label>
-                        <input type="time" id="tx-time" required class="w-full p-2 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl">
+                        <label class="block text-xs font-semibold mb-1.5" id="lbl-time">সময়</label>
+                        <input type="time" id="tx-time" required class="w-full p-2.5 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold mb-1" id="lbl-note">নোট (ঐচ্ছিক)</label>
-                    <input type="text" id="tx-note" placeholder="যেমন: দুপুরের খাবার, মেসে খরচ..." class="w-full p-2 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl">
+                    <label class="block text-xs font-semibold mb-1.5" id="lbl-note">নোট (ঐচ্ছিক)</label>
+                    <input type="text" id="tx-note" placeholder="যেমন: নাস্তা, রিকশা ভাড়া..." class="w-full p-2.5 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl">
                 </div>
 
-                <button type="submit" id="tx-submit-btn" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl transition touch-active shadow-md">
+                <button type="submit" id="tx-submit-btn" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-2xl transition touch-active shadow-lg shadow-emerald-600/20">
                     সংরক্ষণ করুন
                 </button>
             </form>
@@ -533,9 +527,9 @@
     </div>
 
     <!-- MODAL 2: BALANCE SETUP -->
-    <div id="modal-setup" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
-        <div class="bg-white dark:bg-slate-800 w-full max-w-md rounded-t-2xl sm:rounded-2xl max-h-[90vh] overflow-y-auto p-5 space-y-4 shadow-2xl">
-            <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-700 pb-3">
+    <div id="modal-setup" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-3xl sm:rounded-3xl max-h-[90vh] overflow-y-auto p-5 space-y-4 shadow-2xl border border-slate-100 dark:border-slate-800">
+            <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-3">
                 <h3 class="text-base font-bold text-slate-800 dark:text-white" id="txt-setup-header">প্রারম্ভিক ব্যালেন্স সেটআপ</h3>
                 <button onclick="closeModal('modal-setup')" class="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-white">
                     <i data-lucide="x" class="w-5 h-5"></i>
@@ -544,31 +538,31 @@
             <form onsubmit="handleSetupSubmit(event)" class="space-y-3 text-xs">
                 <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="block font-medium mb-1">নগদ টাকা (Cash)</label>
-                        <input type="number" step="0.01" id="init-cash" required class="w-full p-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg font-mono">
+                        <label class="block font-medium mb-1.5">নগদ টাকা (Cash)</label>
+                        <input type="number" step="0.01" id="init-cash" required class="w-full p-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl font-mono">
                     </div>
                     <div>
-                        <label class="block font-medium mb-1">বিকাশ (bKash)</label>
-                        <input type="number" step="0.01" id="init-bkash" required class="w-full p-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg font-mono">
+                        <label class="block font-medium mb-1.5">বিকাশ (bKash)</label>
+                        <input type="number" step="0.01" id="init-bkash" required class="w-full p-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl font-mono">
                     </div>
                     <div>
-                        <label class="block font-medium mb-1">নগদ (Nagad)</label>
-                        <input type="number" step="0.01" id="init-nagad" required class="w-full p-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg font-mono">
+                        <label class="block font-medium mb-1.5">নগদ অ্যাপ (Nagad)</label>
+                        <input type="number" step="0.01" id="init-nagad" required class="w-full p-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl font-mono">
                     </div>
                     <div>
-                        <label class="block font-medium mb-1">রকেট (Rocket)</label>
-                        <input type="number" step="0.01" id="init-rocket" required class="w-full p-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg font-mono">
+                        <label class="block font-medium mb-1.5">রকেট (Rocket)</label>
+                        <input type="number" step="0.01" id="init-rocket" required class="w-full p-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl font-mono">
                     </div>
                 </div>
                 <div>
-                    <label class="block font-medium mb-1">ব্যাংক অ্যাকাউন্ট (Bank)</label>
-                    <input type="number" step="0.01" id="init-bank" required class="w-full p-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg font-mono">
+                    <label class="block font-medium mb-1.5">ব্যাংক অ্যাকাউন্ট (Bank)</label>
+                    <input type="number" step="0.01" id="init-bank" required class="w-full p-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl font-mono">
                 </div>
-                <div class="pt-2 border-t border-slate-100 dark:border-slate-700">
-                    <label class="block font-medium mb-1">দৈনিক খরচের বাজেট (৳)</label>
-                    <input type="number" step="0.01" id="init-daily-limit" required class="w-full p-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg font-mono">
+                <div class="pt-2 border-t border-slate-100 dark:border-slate-800">
+                    <label class="block font-medium mb-1.5">দৈনিক খরচের বাজেট (৳)</label>
+                    <input type="number" step="0.01" id="init-daily-limit" required class="w-full p-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl font-mono">
                 </div>
-                <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition touch-active">
+                <button type="submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl transition touch-active shadow-md shadow-emerald-600/20">
                     সেভ করুন
                 </button>
             </form>
@@ -576,28 +570,28 @@
     </div>
 
     <!-- MODAL 3: SAVINGS GOAL -->
-    <div id="modal-goal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
-        <div class="bg-white dark:bg-slate-800 w-full max-w-md rounded-t-2xl sm:rounded-2xl p-5 space-y-4 shadow-2xl">
-            <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-700 pb-3">
+    <div id="modal-goal" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 space-y-4 shadow-2xl border border-slate-100 dark:border-slate-800">
+            <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-3">
                 <h3 class="text-base font-bold text-slate-800 dark:text-white" id="txt-goal-modal-title">সঞ্চয় লক্ষ্য নির্ধারণ</h3>
                 <button onclick="closeModal('modal-goal')" class="p-1 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             <form onsubmit="handleGoalSubmit(event)" class="space-y-3 text-xs">
                 <div>
-                    <label class="block font-medium mb-1">লক্ষ্যের নাম</label>
-                    <input type="text" id="goal-title" required class="w-full p-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg">
+                    <label class="block font-medium mb-1.5">লক্ষ্যের নাম</label>
+                    <input type="text" id="goal-title" required class="w-full p-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl">
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="block font-medium mb-1">টার্গেট পরিমাণ (৳)</label>
-                        <input type="number" id="goal-target" required class="w-full p-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg font-mono">
+                        <label class="block font-medium mb-1.5">টার্গেট পরিমাণ (৳)</label>
+                        <input type="number" id="goal-target" required class="w-full p-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl font-mono">
                     </div>
                     <div>
-                        <label class="block font-medium mb-1">বর্তমান জমানো (৳)</label>
-                        <input type="number" id="goal-current" required class="w-full p-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg font-mono">
+                        <label class="block font-medium mb-1.5">বর্তমান জমানো (৳)</label>
+                        <input type="number" id="goal-current" required class="w-full p-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl font-mono">
                     </div>
                 </div>
-                <button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition">সেভ করুন</button>
+                <button type="submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl transition shadow-md shadow-emerald-600/20">সেভ করুন</button>
             </form>
         </div>
     </div>
@@ -638,35 +632,26 @@
             lang: 'bn',
             theme: 'light',
             hideBalance: false,
-            settings: { userName: 'শিক্ষার্থী', dailyLimit: 300, monthlyLimit: 9000 },
-            openingBalances: { cash: 1000, bkash: 500, nagad: 0, rocket: 0, bank: 0 },
+            settings: { userName: 'ব্যবহারকারী', dailyLimit: 500, monthlyLimit: 15000 },
+            openingBalances: { cash: 0, bkash: 0, nagad: 0, rocket: 0, bank: 0 },
             transactions: [],
-            savingsGoals: [{ id: '1', title: 'পরীক্ষার ফি ও বই', target: 2000, current: 800 }]
+            savingsGoals: []
         };
 
         let currentTxType = 'expense';
         let categoryChartInstance = null;
 
         function loadState() {
-            const saved = localStorage.getItem('hishabpro_data_v1');
+            const saved = localStorage.getItem('hishabpro_data_v2');
             if (saved) {
                 try { state = JSON.parse(saved); } catch(e) { console.error(e); }
             } else {
-                state.transactions = getSampleTransactions();
                 saveState();
             }
         }
 
         function saveState() {
-            localStorage.setItem('hishabpro_data_v1', JSON.stringify(state));
-        }
-
-        function getSampleTransactions() {
-            const today = new Date().toISOString().split('T')[0];
-            return [
-                { id: 'sample-1', type: 'income', amount: 5000, category: 'family_inc', wallet: 'bkash', date: today, time: '10:00', note: 'মাসিক হাতখরচ' },
-                { id: 'sample-2', type: 'expense', amount: 120, category: 'food', wallet: 'cash', date: today, time: '13:30', note: 'দুপুরের খাবার' }
-            ];
+            localStorage.setItem('hishabpro_data_v2', JSON.stringify(state));
         }
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -773,25 +758,25 @@
                 document.getElementById(`nav-${id}`).className = "flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 touch-active";
             });
             document.getElementById(`view-${viewId}`).classList.remove('hidden');
-            document.getElementById(`nav-${viewId}`).className = "flex flex-col items-center justify-center text-blue-600 dark:text-blue-400 touch-active font-semibold";
+            document.getElementById(`nav-${viewId}`).className = "flex flex-col items-center justify-center text-emerald-600 dark:text-emerald-400 touch-active font-semibold";
             if (viewId === 'reports') renderReports();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function renderDashboard() {
             const { netBalance, totalIncome, totalExpense, todayExpense, walletTotals } = calculateBalances();
-            document.getElementById('user-display-name').innerText = state.settings.userName || 'শিক্ষার্থী';
+            document.getElementById('user-display-name').innerText = state.settings.userName || 'ব্যবহারকারী';
             document.getElementById('dash-net-balance').innerText = formatCurrency(netBalance);
             document.getElementById('dash-total-income').innerText = formatCurrency(totalIncome);
             document.getElementById('dash-total-expense').innerText = formatCurrency(totalExpense);
             document.getElementById('dash-today-expense').innerText = formatCurrency(todayExpense);
 
-            const limit = state.settings.dailyLimit || 300;
-            const pct = Math.min(100, Math.round((todayExpense / limit) * 100));
+            const limit = state.settings.dailyLimit || 500;
+            const pct = limit > 0 ? Math.min(100, Math.round((todayExpense / limit) * 100)) : 0;
             document.getElementById('dash-daily-budget-text').innerText = `${formatCurrency(todayExpense)} / ${formatCurrency(limit)}`;
             const bar = document.getElementById('dash-daily-budget-bar');
             bar.style.width = `${pct}%`;
-            bar.className = `h-full transition-all duration-300 ${pct >= 100 ? 'bg-red-500' : pct >= 70 ? 'bg-amber-500' : 'bg-blue-500'}`;
+            bar.className = `h-full transition-all duration-300 ${pct >= 100 ? 'bg-rose-500' : pct >= 70 ? 'bg-amber-500' : 'bg-emerald-500'}`;
             
             document.getElementById('dash-daily-remaining-text').innerHTML = `
                 <span>${state.lang === 'bn' ? 'অবশিষ্ট:' : 'Remaining:'} ${formatCurrency(Math.max(0, limit - todayExpense))}</span>
@@ -801,26 +786,26 @@
             renderBudgetAlerts(pct);
 
             document.getElementById('wallet-cards-grid').innerHTML = Object.keys(WALLET_NAMES).map(key => `
-                <div class="bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-200/80 dark:border-slate-700 flex justify-between items-center">
+                <div class="bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200/80 dark:border-slate-800 flex justify-between items-center shadow-sm">
                     <div>
-                        <p class="text-[11px] text-slate-400">${WALLET_NAMES[key][state.lang]}</p>
+                        <p class="text-[11px] text-slate-400 font-medium">${WALLET_NAMES[key][state.lang]}</p>
                         <p class="text-xs font-bold font-mono mt-0.5">${formatCurrency(walletTotals[key])}</p>
                     </div>
-                    <div class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-500 text-xs">৳</div>
+                    <div class="w-7 h-7 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 font-bold text-xs">৳</div>
                 </div>
             `).join('');
 
             const sorted = [...state.transactions].sort((a,b) => new Date(b.date + 'T' + b.time) - new Date(a.date + 'T' + a.time)).slice(0, 4);
-            document.getElementById('dashboard-recent-list').innerHTML = sorted.length === 0 ? `<p class="text-xs text-center text-slate-400 py-3">কোন লেনদেন নেই</p>` : sorted.map(tx => renderTxRowHTML(tx)).join('');
+            document.getElementById('dashboard-recent-list').innerHTML = sorted.length === 0 ? `<p class="text-xs text-center text-slate-400 py-6">কোন লেনদেন নেই</p>` : sorted.map(tx => renderTxRowHTML(tx)).join('');
             lucide.createIcons();
         }
 
         function renderBudgetAlerts(pct) {
             const container = document.getElementById('budget-alerts-container');
             if (pct >= 100) {
-                container.innerHTML = `<div class="p-3 bg-red-500/10 border border-red-500/30 text-red-600 rounded-xl text-xs flex items-center gap-2"><i data-lucide="alert-triangle" class="w-4 h-4"></i><span>সতর্কবার্তা! আপনি আপনার দৈনিক খরচের সীমা অতিক্রম করেছেন।</span></div>`;
+                container.innerHTML = `<div class="p-3 bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 rounded-2xl text-xs flex items-center gap-2"><i data-lucide="alert-triangle" class="w-4 h-4"></i><span>সতর্কবার্তা! আপনি আপনার দৈনিক খরচের সীমা অতিক্রম করেছেন।</span></div>`;
             } else if (pct >= 70) {
-                container.innerHTML = `<div class="p-3 bg-amber-500/10 border border-amber-500/30 text-amber-600 rounded-xl text-xs flex items-center gap-2"><i data-lucide="alert-circle" class="w-4 h-4"></i><span>আপনি দৈনিক বাজেটের ৭০% এর বেশি খরচ করেছেন।</span></div>`;
+                container.innerHTML = `<div class="p-3 bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 rounded-2xl text-xs flex items-center gap-2"><i data-lucide="alert-circle" class="w-4 h-4"></i><span>আপনি দৈনিক বাজেটের ৭০% এর বেশি খরচ করেছেন।</span></div>`;
             } else { container.innerHTML = ''; }
         }
 
@@ -829,21 +814,21 @@
             const catObj = [...CATEGORIES.expense, ...CATEGORIES.income].find(c => c.id === tx.category);
             const title = tx.type === 'transfer' ? `স্থানান্তর: ${WALLET_NAMES[tx.fromWallet][state.lang]} → ${WALLET_NAMES[tx.toWallet][state.lang]}` : (catObj ? catObj[state.lang] : tx.category);
             return `
-                <div class="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition">
+                <div class="flex items-center justify-between p-2.5 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition shadow-sm">
                     <div class="flex items-center space-x-3">
-                        <div class="w-9 h-9 rounded-xl ${isExp ? 'bg-red-50 text-red-500' : isInc ? 'bg-emerald-50 text-emerald-500' : 'bg-blue-50 text-blue-500'} flex items-center justify-center">
+                        <div class="w-9 h-9 rounded-xl ${isExp ? 'bg-rose-50 text-rose-500 dark:bg-rose-950/40' : isInc ? 'bg-emerald-50 text-emerald-500 dark:bg-emerald-950/40' : 'bg-blue-50 text-blue-500 dark:bg-blue-950/40'} flex items-center justify-center">
                             <i data-lucide="${isExp ? (catObj?.icon || 'arrow-down-right') : isInc ? 'arrow-up-right' : 'arrow-left-right'}" class="w-4 h-4"></i>
                         </div>
                         <div>
-                            <p class="text-xs font-semibold">${title}</p>
+                            <p class="text-xs font-semibold text-slate-800 dark:text-slate-100">${title}</p>
                             <p class="text-[10px] text-slate-400">${tx.date} • ${tx.note || WALLET_NAMES[tx.wallet]?.[state.lang] || ''}</p>
                         </div>
                     </div>
                     <div class="text-right">
-                        <p class="text-xs font-bold font-mono ${isExp ? 'text-red-500' : isInc ? 'text-emerald-500' : 'text-blue-500'}">${isExp ? '-' : isInc ? '+' : ''}৳${tx.amount}</p>
-                        <div class="flex gap-1 justify-end mt-1">
-                            <button onclick="editTx('${tx.id}')" class="text-[10px] text-blue-500 hover:underline">Edit</button>
-                            <button onclick="deleteTx('${tx.id}')" class="text-[10px] text-red-400 hover:underline">Delete</button>
+                        <p class="text-xs font-bold font-mono ${isExp ? 'text-rose-500' : isInc ? 'text-emerald-500' : 'text-blue-500'}">${isExp ? '-' : isInc ? '+' : ''}৳${tx.amount}</p>
+                        <div class="flex gap-2 justify-end mt-1">
+                            <button onclick="editTx('${tx.id}')" class="text-[10px] text-blue-500 font-semibold hover:underline">Edit</button>
+                            <button onclick="deleteTx('${tx.id}')" class="text-[10px] text-rose-500 font-semibold hover:underline">Delete</button>
                         </div>
                     </div>
                 </div>
@@ -877,7 +862,7 @@
             });
 
             document.getElementById('tx-count-badge').innerText = `${list.length} টি`;
-            document.getElementById('tx-ledger-list').innerHTML = list.length === 0 ? `<div class="bg-white dark:bg-slate-800 p-8 rounded-xl text-center text-slate-400 text-xs">কোন লেনদেন পাওয়া যায়নি</div>` : list.map(tx => renderTxRowHTML(tx)).join('');
+            document.getElementById('tx-ledger-list').innerHTML = list.length === 0 ? `<div class="bg-white dark:bg-slate-900 p-8 rounded-2xl text-center text-slate-400 text-xs border border-slate-200/80 dark:border-slate-800">কোন লেনদেন পাওয়া যায়নি</div>` : list.map(tx => renderTxRowHTML(tx)).join('');
             lucide.createIcons();
         }
 
@@ -895,12 +880,12 @@
 
             const netFlow = incTotal - expTotal;
             document.getElementById('rep-net-flow').innerText = `৳ ${netFlow}`;
-            document.getElementById('rep-net-flow').className = `text-sm font-bold font-mono mt-0.5 ${netFlow >= 0 ? 'text-emerald-500' : 'text-red-500'}`;
-            document.getElementById('rep-daily-avg').innerText = `৳ ${(expTotal / new Date().getDate()).toFixed(0)}`;
+            document.getElementById('rep-net-flow').className = `text-sm font-bold font-mono mt-0.5 ${netFlow >= 0 ? 'text-emerald-500' : 'text-rose-500'}`;
+            document.getElementById('rep-daily-avg').innerText = `৳ ${(expTotal / (new Date().getDate() || 1)).toFixed(0)}`;
 
             document.getElementById('rep-wallet-breakdown').innerHTML = Object.keys(WALLET_NAMES).map(k => {
                 const spent = walletMap[k] || 0, pct = expTotal > 0 ? Math.round((spent / expTotal) * 100) : 0;
-                return `<div><div class="flex justify-between mb-1"><span>${WALLET_NAMES[k][state.lang]}</span><span class="font-mono">৳${spent} (${pct}%)</span></div><div class="w-full bg-slate-100 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden"><div class="bg-blue-500 h-full" style="width: ${pct}%"></div></div></div>`;
+                return `<div><div class="flex justify-between mb-1"><span>${WALLET_NAMES[k][state.lang]}</span><span class="font-mono font-semibold">৳${spent} (${pct}%)</span></div><div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden"><div class="bg-emerald-500 h-full" style="width: ${pct}%"></div></div></div>`;
             }).join('');
 
             renderCategoryDoughnutChart(catMap);
@@ -911,7 +896,7 @@
             if (!ctx) return;
             if (categoryChartInstance) categoryChartInstance.destroy();
 
-            const labels = [], data = [], colors = ['#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899', '#6366f1', '#14b8a6'];
+            const labels = [], data = [], colors = ['#f43f5e', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899', '#6366f1', '#14b8a6'];
             Object.keys(catMap).forEach(catId => {
                 const catObj = CATEGORIES.expense.find(c => c.id === catId);
                 labels.push(catObj ? catObj[state.lang] : catId);
@@ -923,20 +908,17 @@
             categoryChartInstance = new Chart(ctx, {
                 type: 'doughnut',
                 data: { labels, datasets: [{ data, backgroundColor: colors, borderWidth: 0 }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, cutout: '70%' }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, cutout: '75%' }
             });
 
             document.getElementById('rep-category-legend').innerHTML = labels.map((lbl, idx) => `
                 <div class="flex justify-between items-center text-xs">
-                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full inline-block" style="background-color: ${colors[idx % colors.length]}"></span><span>${lbl}</span></span>
-                    <span class="font-mono font-semibold">৳${data[idx] || 0}</span>
+                    <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full inline-block" style="background-color: ${colors[idx % colors.length]}"></span><span class="font-medium">${lbl}</span></span>
+                    <span class="font-mono font-bold">৳${data[idx] || 0}</span>
                 </div>
             `).join('');
         }
 
-        // ==========================================
-        // DETAILED STATEMENT EXPORT ENGINE (PDF, Print, JPG)
-        // ==========================================
         function preparePrintableStatement() {
             const period = document.getElementById('report-period')?.value || 'this-month';
             const nowStr = new Date().toISOString().split('T')[0].substring(0, 7);
@@ -963,7 +945,7 @@
                     return `
                         <tr class="border-b">
                             <td class="p-2">${t.date} ${t.time}</td>
-                            <td class="p-2 font-semibold ${t.type==='expense'?'text-red-600':t.type==='income'?'text-emerald-600':'text-blue-600'}">${t.type==='expense'?'খরচ':t.type==='income'?'আয়':'স্থানান্তর'}</td>
+                            <td class="p-2 font-semibold ${t.type==='expense'?'text-rose-600':t.type==='income'?'text-emerald-600':'text-blue-600'}">${t.type==='expense'?'খরচ':t.type==='income'?'আয়':'স্থানান্তর'}</td>
                             <td class="p-2">${catName} (${WALLET_NAMES[t.wallet||t.fromWallet]?.bn || ''})</td>
                             <td class="p-2">${t.note || '-'}</td>
                             <td class="p-2 text-right font-mono font-bold">৳${t.amount}</td>
@@ -1019,14 +1001,14 @@
 
             document.getElementById('savings-goals-list').innerHTML = state.savingsGoals.length === 0 ? `<p class="text-xs text-slate-400 py-2">কোন লক্ষ্য যুক্ত করা হয়নি</p>` : state.savingsGoals.map(g => {
                 const pct = Math.min(100, Math.round((g.current / g.target) * 100));
-                return `<div class="bg-slate-50 dark:bg-slate-900 p-3 rounded-xl border dark:border-slate-700 space-y-1 text-xs"><div class="flex justify-between font-semibold"><span>${g.title}</span><span class="font-mono text-emerald-500">৳${g.current} / ৳${g.target}</span></div><div class="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden"><div class="bg-emerald-500 h-full" style="width: ${pct}%"></div></div><div class="flex justify-between text-[10px] text-slate-400"><span>${pct}% complete</span><button onclick="deleteGoal('${g.id}')" class="text-red-400 hover:underline">Delete</button></div></div>`;
+                return `<div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-2xl border dark:border-slate-800 space-y-1 text-xs"><div class="flex justify-between font-semibold"><span>${g.title}</span><span class="font-mono text-emerald-500">৳${g.current} / ৳${g.target}</span></div><div class="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden"><div class="bg-emerald-500 h-full" style="width: ${pct}%"></div></div><div class="flex justify-between text-[10px] text-slate-400"><span>${pct}% complete</span><button onclick="deleteGoal('${g.id}')" class="text-rose-400 hover:underline">Delete</button></div></div>`;
             }).join('');
         }
 
         function saveSettings() {
-            state.settings.userName = document.getElementById('cfg-user-name').value || 'শিক্ষার্থী';
-            state.settings.dailyLimit = parseFloat(document.getElementById('cfg-daily-limit').value) || 300;
-            state.settings.monthlyLimit = parseFloat(document.getElementById('cfg-monthly-limit').value) || 9000;
+            state.settings.userName = document.getElementById('cfg-user-name').value || 'ব্যবহারকারী';
+            state.settings.dailyLimit = parseFloat(document.getElementById('cfg-daily-limit').value) || 500;
+            state.settings.monthlyLimit = parseFloat(document.getElementById('cfg-monthly-limit').value) || 15000;
             saveState();
             renderAllViews();
             alert('সেটিংস সফলভাবে সংরক্ষিত হয়েছে!');
@@ -1046,7 +1028,7 @@
         function setTxType(type) {
             currentTxType = type;
             ['expense', 'income', 'transfer'].forEach(t => {
-                document.getElementById(`type-btn-${t}`).className = t === type ? "py-2 rounded-lg bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-sm" : "py-2 rounded-lg text-slate-500";
+                document.getElementById(`type-btn-${t}`).className = t === type ? "py-2.5 rounded-xl bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-sm" : "py-2.5 rounded-xl text-slate-500";
             });
 
             const catWrapper = document.getElementById('field-category-wrapper');
@@ -1136,7 +1118,7 @@
             state.openingBalances.nagad = parseFloat(document.getElementById('init-nagad').value) || 0;
             state.openingBalances.rocket = parseFloat(document.getElementById('init-rocket').value) || 0;
             state.openingBalances.bank = parseFloat(document.getElementById('init-bank').value) || 0;
-            state.settings.dailyLimit = parseFloat(document.getElementById('init-daily-limit').value) || 300;
+            state.settings.dailyLimit = parseFloat(document.getElementById('init-daily-limit').value) || 500;
             saveState();
             closeModal('modal-setup');
             renderAllViews();
@@ -1190,10 +1172,10 @@
             URL.revokeObjectURL(url);
         }
 
-        function loadSampleData() { state.transactions = getSampleTransactions(); saveState(); renderAllViews(); alert('নমুনা ডাটা লোড হয়েছে!'); }
         function resetAllData() {
-            if (confirm('সব ডাটা মুছে ফেলতে চান?')) {
+            if (confirm('সব ডাটা মুছে ফেলতে চান? এটি আর ফিরিয়ে আনা সম্ভব হবে না।')) {
                 localStorage.removeItem('hishabpro_data_v1');
+                localStorage.removeItem('hishabpro_data_v2');
                 location.reload();
             }
         }
