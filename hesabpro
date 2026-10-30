@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="bn" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>HishabPro — হাতখরচের হিসাব</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Hind Siliguri & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- html2canvas & jsPDF for PDF/Image Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#2563eb',
+                            800: '#1e3a8a',
+                            900: '#0f172a',
+                            950: '#090d16',
+                        },
+                        income: '#10b981',
+                        expense: '#ef4444'
+                    },
+                    fontFamily: {
+                        sans: ['Hind Siliguri', 'Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .touch-active:active { transform: scale(0.97); transition: transform 0.1s ease; }
+        body { user-select: none; -webkit-tap-highlight-color: transparent; }
+        input, select, textarea { user-select: auto; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 min-h-full flex flex-col font-sans transition-colors duration-200 pb-20">
+
+    <!-- TOP STICKY HEADER -->
+    <header class="sticky top-0 z-30 bg-slate-900 text-white shadow-md">
+        <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-blue-600 flex items-center justify-center font-bold text-white shadow-inner">
+                    ৳
+                </div>
+                <div>
+                    <h1 class="text-base font-bold leading-tight tracking-wide flex items-center gap-1">
+                        HishabPro <span class="text-[10px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded font-mono">v1.1</span>
+                    </h1>
+                    <p class="text-[11px] text-slate-400 leading-tight" id="header-date">--</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="toggleLanguage()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-2.5 py-1 rounded-lg font-medium transition touch-active">
+                    <span id="lang-btn-text">English</span>
+                </button>
+                <button onclick="toggleDarkMode()" class="p-2 bg-slate-800 text-slate-300 hover:text-white rounded-lg border border-slate-700 transition touch-active" aria-label="Toggle Theme">
+                    <i data-lucide="moon" class="w-4 h-4 dark:hidden"></i>
+                    <i data-lucide="sun" class="w-4 h-4 hidden dark:block text-amber-400"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN APP CONTAINER -->
+    <main class="flex-1 max-w-md w-full mx-auto px-4 pt-3 space-y-4">
+
+        <!-- BUDGET ALERTS BANNER CONTAINER -->
+        <div id="budget-alerts-container" class="space-y-2"></div>
+
+        <!-- VIEW 1: DASHBOARD (হোম) -->
+        <section id="view-dashboard" class="space-y-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-sm font-semibold text-slate-500 dark:text-slate-400" id="txt-greeting">আসসালামু আলাইকুম</h2>
+                    <p class="text-lg font-bold text-slate-800 dark:text-white" id="user-display-name">ব্যবহারকারী</p>
+                </div>
+                <button onclick="openSetupModal()" class="text-xs text-blue-600 dark:text-blue-400 flex items-center gap-1 font-medium bg-blue-50 dark:bg-slate-800 px-2.5 py-1.5 rounded-lg border border-blue-100 dark:border-slate-700">
+                    <i data-lucide="sliders" class="w-3.5 h-3.5"></i>
+                    <span id="txt-balance-setup">ব্যালেন্স সেটআপ</span>
+                </button>
+            </div>
+
+            <!-- MAIN BALANCE CARD -->
+            <div class="bg-gradient-to-br from-slate-900 via-slate-850 to-slate-800 text-white rounded-2xl p-5 shadow-xl relative overflow-hidden border border-slate-700/50">
+                <div class="absolute -right-6 -bottom-6 w-28 h-28 bg-emerald-500/10 rounded-full blur-xl pointer-events-none"></div>
+                <div class="flex justify-between items-start mb-2">
+                    <span class="text-xs font-medium text-slate-400 uppercase tracking-wider" id="txt-current-balance">বর্তমান ব্যালেন্স</span>
+                    <button onclick="toggleHideBalance()" class="p-1 text-slate-400 hover:text-white rounded-md transition" aria-label="Show/Hide balance">
+                        <i id="eye-icon" data-lucide="eye" class="w-4 h-4"></i>
+                    </button>
+                </div>
+                <div class="text-3xl font-bold font-mono tracking-tight my-1 text-emerald-400" id="dash-net-balance">
+                    ৳ 0.00
+                </div>
+
+                <div class="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-slate-700/70 text-center">
+                    <div class="bg-slate-800/60 p-2 rounded-xl">
+                        <p class="text-[10px] text-slate-400" id="txt-total-income">মোট আয়</p>
+                        <p class="text-xs font-semibold text-emerald-400 font-mono mt-0.5" id="dash-total-income">৳ 0</p>
+                    </div>
+                    <div class="bg-slate-800/60 p-2 rounded-xl">
+                        <p class="text-[10px] text-slate-400" id="txt-total-expense">মোট খরচ</p>
+                        <p class="text-xs font-semibold text-red-400 font-mono mt-0.5" id="dash-total-expense">৳ 0</p>
+                    </div>
+                    <div class="bg-slate-800/60 p-2 rounded-xl">
+                        <p class="text-[10px] text-slate-400" id="txt-today-expense">আজকের খরচ</p>
+                        <p class="text-xs font-semibold text-amber-400 font-mono mt-0.5" id="dash-today-expense">৳ 0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QUICK ACTION BUTTONS -->
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="openAddModal('expense')" class="flex items-center justify-center gap-2 py-3 px-4 bg-red-500 hover:bg-red-600 text-white font-medium rounded-xl shadow-sm touch-active transition">
+                    <i data-lucide="minus-circle" class="w-5 h-5"></i>
+                    <span id="txt-btn-quick-expense">খরচ যোগ করুন</span>
+                </button>
+                <button onclick="openAddModal('income')" class="flex items-center justify-center gap-2 py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-xl shadow-sm touch-active transition">
+                    <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                    <span id="txt-btn-quick-income">আয় যোগ করুন</span>
+                </button>
+            </div>
+
+            <!-- DAILY BUDGET PROGRESS -->
+            <div class="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200/80 dark:border-slate-700 space-y-2">
+                <div class="flex justify-between items-center text-xs">
+                    <span class="font-semibold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
+                        <i data-lucide="target" class="w-4 h-4 text-blue-500"></i>
+                        <span id="txt-daily-limit-title">আজকের খরচের সীমা</span>
+                    </span>
+                    <span class="font-mono text-slate-500 dark:text-slate-400" id="dash-daily-budget-text">৳ 0 / ৳ 0</span>
+                </div>
+                <div class="w-full bg-slate-100 dark:bg-slate-700 h-2.5 rounded-full overflow-hidden">
+                    <div id="dash-daily-budget-bar" class="bg-blue-500 h-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400 flex justify-between" id="dash-daily-remaining-text">
+                    <span>অবশিষ্ট budget: ৳ 0</span>
+                    <span id="dash-daily-budget-pct">0% used</span>
+                </p>
+            </div>
+
+            <!-- WALLET BREAKDOWN -->
+            <div class="space-y-2">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400" id="txt-wallets-header">ওয়ালেট ব্যালেন্স</h3>
+                    <button onclick="openAddModal('transfer')" class="text-xs text-blue-600 dark:text-blue-400 font-semibold flex items-center gap-1">
+                        <i data-lucide="arrow-left-right" class="w-3.5 h-3.5"></i> <span id="txt-btn-transfer">টাকা স্থানান্তর</span>
+                    </button>
+                </div>
+                <div class="grid grid-cols-2 gap-2" id="wallet-cards-grid"></div>
+            </div>
+
+            <!-- RECENT TRANSACTIONS -->
+            <div class="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200/80 dark:border-slate-700 space-y-3">
+                <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-700/60 pb-2">
+                    <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100" id="txt-recent-txns">সাম্প্রতিক লেনদেন</h3>
+                    <button onclick="switchTab('transactions')" class="text-xs text-blue-600 dark:text-blue-400 font-medium hover:underline" id="txt-see-all">সব দেখুন</button>
+                </div>
+                <div id="dashboard-recent-list" class="space-y-2"></div>
+            </div>
+        </section>
+
+        <!-- VIEW 2: TRANSACTIONS LEDGER (হিসাব) -->
+        <section id="view-transactions" class="space-y-3 hidden">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-bold" id="txt-ledger-title">লেনদেন বিবরণী</h2>
+                <span class="text-xs text-slate-500 bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded-full font-mono" id="tx-count-badge">0 টি</span>
+            </div>
+
+            <!-- SEARCH & FILTERS -->
+            <div class="bg-white dark:bg-slate-800 p-3 rounded-xl shadow-sm border border-slate-200/80 dark:border-slate-700 space-y-2">
+                <div class="relative">
+                    <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-slate-400"></i>
+                    <input type="text" id="tx-search-input" oninput="renderTransactions()" placeholder="খুঁজুন (নোট, ক্যাটাগরি, পরিমাণ)..." class="w-full text-xs pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500">
+                </div>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <select id="tx-filter-date" onchange="renderTransactions()" class="p-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg font-medium">
+                        <option value="all">সব সময় (All)</option>
+                        <option value="today" selected>আজ (Today)</option>
+                        <option value="yesterday">গতকাল (Yesterday)</option>
+                        <option value="week">এই সপ্তাহ (This Week)</option>
+                        <option value="month">এই মাস (This Month)</option>
+                    </select>
+                    <select id="tx-filter-type" onchange="renderTransactions()" class="p-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg font-medium">
+                        <option value="all">সব ধরনের লেনদেন</option>
+                        <option value="expense">শুধু খরচ (Expense)</option>
+                        <option value="income">শুধু আয় (Income)</option>
+                        <option value="transfer">স্থানান্তর (Transfer)</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <select id="tx-filter-wallet" onchange="renderTransactions()" class="p-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg font-medium">
+                        <option value="all">সব ওয়ালেট/অ্যাকাউন্ট</option>
+                        <option value="cash">নগদ (Cash)</option>
+                        <option value="bkash">বিকাশ (bKash)</option>
+                        <option value="nagad">নগদ (Nagad)</option>
+                        <option value="rocket">রকেট (Rocket)</option>
+                        <option value="bank">ব্যাংক (Bank)</option>
+                    </select>
+                    <select id="tx-sort-order" onchange="renderTransactions()" class="p-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg font-medium">
+                        <option value="newest">সর্বশেষ আগে</option>
+                        <option value="oldest">পুরাতন আগে</option>
+                        <option value="highest">সর্বোচ্চ পরিমাণ</option>
+                        <option value="lowest">সর্বনিম্ন পরিমাণ</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- LEDGER TRANSACTION LIST -->
+            <div id="tx-ledger-list" class="space-y-3"></div>
+        </section>
+
+        <!-- VIEW 3: REPORTS & ANALYTICS & STATEMENT DOWNLOAD (রিপোর্ট ও স্টেটমেন্ট) -->
+        <section id="view-reports" class="space-y-4 hidden">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-bold" id="txt-reports-title">আর্থিক রিপোর্ট ও স্টেটমেন্ট</h2>
+                <select id="report-period" onchange="renderReports()" class="text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-lg">
+                    <option value="this-month" selected>এই মাস</option>
+                    <option value="all-time">সর্বমোট</option>
+                </select>
+            </div>
+
+            <!-- DETAILED STATEMENT DOWNLOAD PANEL -->
+            <div class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-4 rounded-xl shadow-md space-y-3">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-sm font-bold flex items-center gap-1.5">
+                            <i data-lucide="file-text" class="w-4 h-4"></i>
+                            <span>ডিটেইলড স্টেটমেন্ট ডাউনলোড</span>
+                        </h3>
+                        <p class="text-[11px] text-blue-100">যে কোনো সময়ের পূর্ণাঙ্গ হিসাব প্রিন্ট বা ডাউনলোড করুন</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-2 pt-1">
+                    <button onclick="downloadStatementPDF()" class="bg-white/15 hover:bg-white/25 text-white text-xs py-2 px-2 rounded-lg font-medium border border-white/25 flex items-center justify-center gap-1 transition touch-active">
+                        <i data-lucide="download" class="w-3.5 h-3.5"></i> PDF
+                    </button>
+                    <button onclick="printStatement()" class="bg-white/15 hover:bg-white/25 text-white text-xs py-2 px-2 rounded-lg font-medium border border-white/25 flex items-center justify-center gap-1 transition touch-active">
+                        <i data-lucide="printer" class="w-3.5 h-3.5"></i> Print
+                    </button>
+                    <button onclick="downloadStatementJPG()" class="bg-white/15 hover:bg-white/25 text-white text-xs py-2 px-2 rounded-lg font-medium border border-white/25 flex items-center justify-center gap-1 transition touch-active">
+                        <i data-lucide="image" class="w-3.5 h-3.5"></i> JPG
+                    </button>
+                </div>
+            </div>
+
+            <!-- STAT SUMMARY CARDS -->
+            <div class="grid grid-cols-2 gap-2 text-center">
+                <div class="bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-200/80 dark:border-slate-700">
+                    <p class="text-[11px] text-slate-500" id="txt-net-cashflow">নেট ক্যাশ-ফ্লো</p>
+                    <p class="text-sm font-bold font-mono mt-0.5" id="rep-net-flow">৳ 0</p>
+                </div>
+                <div class="bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-200/80 dark:border-slate-700">
+                    <p class="text-[11px] text-slate-500" id="txt-daily-avg">দৈনিক গড় খরচ</p>
+                    <p class="text-sm font-bold font-mono text-red-500 mt-0.5" id="rep-daily-avg">৳ 0</p>
+                </div>
+            </div>
+
+            <!-- CHART: CATEGORY EXPENSE BREAKDOWN -->
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200/80 dark:border-slate-700 space-y-3">
+                <h3 class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider" id="txt-category-chart">খাতভিত্তিক খরচ</h3>
+                <div class="h-52 relative flex items-center justify-center">
+                    <canvas id="categoryDoughnutChart"></canvas>
+                </div>
+                <div id="rep-category-legend" class="text-xs space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-700"></div>
+            </div>
+
+            <!-- CHART: PAYMENT METHOD USAGE -->
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200/80 dark:border-slate-700 space-y-3">
+                <h3 class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider" id="txt-wallet-usage">পেমেন্ট মেথড ব্যবহার</h3>
+                <div id="rep-wallet-breakdown" class="space-y-2 text-xs"></div>
+            </div>
+        </section>
+
+        <!-- VIEW 4: SETTINGS & BUDGETS (সেটিংস) -->
+        <section id="view-settings" class="space-y-4 hidden">
+            <h2 class="text-lg font-bold" id="txt-settings-title">সেটিংস ও বাজেট</h2>
+
+            <!-- DEVELOPER / WEBSITE LINK -->
+            <div class="bg-gradient-to-r from-slate-900 to-blue-950 text-white p-4 rounded-xl shadow-md flex items-center justify-between">
+                <div class="space-y-1">
+                    <p class="text-[11px] text-blue-300 font-semibold uppercase tracking-wider">Developer Portfolio</p>
+                    <p class="text-sm font-bold">Salman Farshi</p>
+                </div>
+                <a href="https://salmanfarshi1630.github.io" target="_blank" class="px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg shadow transition flex items-center gap-1.5 touch-active">
+                    <i data-lucide="external-link" class="w-3.5 h-3.5"></i> ভিজিট ওয়েবসাইট
+                </a>
+            </div>
+
+            <!-- PROFILE & PREFERENCES -->
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200/80 dark:border-slate-700 space-y-3">
+                <h3 class="text-sm font-bold border-b border-slate-100 dark:border-slate-700 pb-2" id="txt-pref-header">ব্যক্তিগত তথ্য ও বাজেট লিমিট</h3>
+                <div class="space-y-3 text-xs">
+                    <div>
+                        <label class="block font-medium mb-1" id="lbl-user-name">আপনার নাম</label>
+                        <input type="text" id="cfg-user-name" class="w-full p-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block font-medium mb-1" id="lbl-daily-limit">দৈনিক খরচের সীমা (৳)</label>
+                            <input type="number" id="cfg-daily-limit" class="w-full p-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg font-mono">
+                        </div>
+                        <div>
+                            <label class="block font-medium mb-1" id="lbl-monthly-limit">মাসিক বাজেট (৳)</label>
+                            <input type="number" id="cfg-monthly-limit" class="w-full p-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg font-mono">
+                        </div>
+                    </div>
+                    <button onclick="saveSettings()" class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition touch-active" id="btn-save-settings">
+                        সংরক্ষণ করুন
+                    </button>
+                </div>
+            </div>
+
+            <!-- SAVINGS GOALS -->
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200/80 dark:border-slate-700 space-y-3">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-sm font-bold" id="txt-savings-goals-title">সঞ্চয় লক্ষ্য (Savings Goals)</h3>
+                    <button onclick="openGoalModal()" class="text-xs text-blue-600 dark:text-blue-400 font-semibold flex items-center gap-1">
+                        <i data-lucide="plus" class="w-3.5 h-3.5"></i> <span id="txt-add-goal">নতুন লক্ষ্য</span>
+                    </button>
+                </div>
+                <div id="savings-goals-list" class="space-y-2"></div>
+            </div>
+
+            <!-- BACKUP, RESTORE & EXPORT -->
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200/80 dark:border-slate-700 space-y-3">
+                <h3 class="text-sm font-bold border-b border-slate-100 dark:border-slate-700 pb-2" id="txt-data-mgnt">ডাটা ব্যাকআপ ও এক্সপোর্ট</h3>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <button onclick="exportCSV()" class="flex items-center justify-center gap-1.5 p-2.5 bg-emerald-50 dark:bg-slate-700 text-emerald-700 dark:text-emerald-300 font-medium rounded-lg border border-emerald-200 dark:border-slate-600 touch-active">
+                        <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+                        <span>CSV এক্সপোর্ট</span>
+                    </button>
+                    <button onclick="exportJSONBackup()" class="flex items-center justify-center gap-1.5 p-2.5 bg-blue-50 dark:bg-slate-700 text-blue-700 dark:text-blue-300 font-medium rounded-lg border border-blue-200 dark:border-slate-600 touch-active">
+                        <i data-lucide="download" class="w-4 h-4"></i>
+                        <span>JSON ব্যাকআপ</span>
+                    </button>
+                </div>
+                <div class="text-xs space-y-2 pt-1">
+                    <label class="block font-medium" id="lbl-restore">ব্যাকআপ ফাইল রিস্টোর করুন (JSON):</label>
+                    <input type="file" id="import-file-input" accept=".json" onchange="importJSONBackup(event)" class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 dark:file:bg-slate-700 dark:file:text-slate-300">
+                </div>
+            </div>
+
+            <!-- DANGER ZONE -->
+            <div class="bg-red-50 dark:bg-red-950/30 p-4 rounded-xl border border-red-200 dark:border-red-900/50 space-y-2">
+                <h3 class="text-xs font-bold text-red-700 dark:text-red-400 uppercase tracking-wider" id="txt-danger-zone">বিপজ্জনক অঞ্চল</h3>
+                <p class="text-[11px] text-red-600/80 dark:text-red-300" id="txt-reset-desc">আপনার সকল হিসাব, লেনদেন এবং সেটিংস মুছে নতুন করে শুরু করতে চান?</p>
+                <div class="flex gap-2">
+                    <button onclick="loadSampleData()" class="px-3 py-1.5 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-medium rounded-lg">
+                        নমুনা ডাটা লোড করুন
+                    </button>
+                    <button onclick="resetAllData()" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-lg touch-active">
+                        সকল তথ্য মুছে ফেলুন
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- HIDDEN PRINTABLE STATEMENT TEMPLATE FOR PDF/PRINT/JPG -->
+    <div id="printable-statement" class="hidden bg-white text-slate-900 p-8 max-w-2xl mx-auto font-sans">
+        <div class="flex justify-between items-border border-b-2 border-slate-800 pb-4 mb-4">
+            <div>
+                <h1 class="text-2xl font-bold">HishabPro - Financial Statement</h1>
+                <p class="text-xs text-slate-500">হাতখরচ ও আর্থিক হিসাব বিবরণী</p>
+            </div>
+            <div class="text-right text-xs">
+                <p class="font-bold" id="stmt-user-name">ব্যবহারকারী: শিক্ষার্থী</p>
+                <p class="text-slate-500" id="stmt-date-range">তারিখ: অদ্যবধি</p>
+            </div>
+        </div>
+        <div class="grid grid-cols-3 gap-4 mb-6 text-center text-xs">
+            <div class="bg-slate-100 p-3 rounded-lg">
+                <p class="text-slate-500">মোট আয়</p>
+                <p class="text-sm font-bold text-emerald-600 font-mono" id="stmt-total-inc">৳ 0</p>
+            </div>
+            <div class="bg-slate-100 p-3 rounded-lg">
+                <p class="text-slate-500">মোট খরচ</p>
+                <p class="text-sm font-bold text-red-600 font-mono" id="stmt-total-exp">৳ 0</p>
+            </div>
+            <div class="bg-slate-100 p-3 rounded-lg">
+                <p class="text-slate-500">নেট ব্যালেন্স</p>
+                <p class="text-sm font-bold text-blue-600 font-mono" id="stmt-net-bal">৳ 0</p>
+            </div>
+        </div>
+        <table class="w-full text-xs text-left border-collapse">
+            <thead>
+                <tr class="bg-slate-800 text-white">
+                    <th class="p-2 border">তারিখ ও সময়</th>
+                    <th class="p-2 border">ধরন</th>
+                    <th class="p-2 border">ক্যাটাগরি/ওয়ালেট</th>
+                    <th class="p-2 border">নোট</th>
+                    <th class="p-2 border text-right">পরিমাণ</th>
+                </tr>
+            </thead>
+            <tbody id="stmt-table-body"></tbody>
+        </table>
+        <div class="mt-8 text-center text-[10px] text-slate-400 border-t pt-2">
+            Generated by HishabPro • Website: salmanfarshi1630.github.io
+        </div>
+    </div>
+
+    <!-- FIXED MOBILE BOTTOM NAVIGATION BAR -->
+    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 shadow-lg">
+        <div class="max-w-md mx-auto grid grid-cols-5 h-16 px-1">
+            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="flex flex-col items-center justify-center text-blue-600 dark:text-blue-400 touch-active">
+                <i data-lucide="home" class="w-5 h-5"></i>
+                <span class="text-[10px] font-medium mt-1" id="nav-txt-home">হোম</span>
+            </button>
+            <button onclick="switchTab('transactions')" id="nav-transactions" class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 touch-active">
+                <i data-lucide="list-filter" class="w-5 h-5"></i>
+                <span class="text-[10px] font-medium mt-1" id="nav-txt-ledger">হিসাব</span>
+            </button>
+            <div class="flex items-center justify-center">
+                <button onclick="openAddModal('expense')" class="w-12 h-12 rounded-full bg-gradient-to-tr from-emerald-500 to-blue-600 text-white flex items-center justify-center shadow-lg hover:opacity-95 touch-active -mt-5 border-4 border-slate-50 dark:border-slate-900">
+                    <i data-lucide="plus" class="w-6 h-6 stroke-[2.5]"></i>
+                </button>
+            </div>
+            <button onclick="switchTab('reports')" id="nav-reports" class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 touch-active">
+                <i data-lucide="pie-chart" class="w-5 h-5"></i>
+                <span class="text-[10px] font-medium mt-1" id="nav-txt-reports">রিপোর্ট</span>
+            </button>
+            <button onclick="switchTab('settings')" id="nav-settings" class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 touch-active">
+                <i data-lucide="settings" class="w-5 h-5"></i>
+                <span class="text-[10px] font-medium mt-1" id="nav-txt-settings">সেটিংস</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- MODAL 1: ADD / EDIT TRANSACTION -->
+    <div id="modal-tx" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
+        <div class="bg-white dark:bg-slate-800 w-full max-w-md rounded-t-2xl sm:rounded-2xl max-h-[90vh] overflow-y-auto p-5 space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-700 pb-3">
+                <h3 class="text-base font-bold text-slate-800 dark:text-white" id="tx-modal-title">লেনদেন যোগ করুন</h3>
+                <button onclick="closeModal('modal-tx')" class="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-3 gap-1 bg-slate-100 dark:bg-slate-900 p-1 rounded-xl text-xs font-semibold">
+                <button type="button" onclick="setTxType('expense')" id="type-btn-expense" class="py-2 rounded-lg text-slate-600 dark:text-slate-300">খরচ</button>
+                <button type="button" onclick="setTxType('income')" id="type-btn-income" class="py-2 rounded-lg text-slate-600 dark:text-slate-300">আয়</button>
+                <button type="button" onclick="setTxType('transfer')" id="type-btn-transfer" class="py-2 rounded-lg text-slate-600 dark:text-slate-300">স্থানান্তর</button>
+            </div>
+
+            <form id="tx-form" onsubmit="handleTxSubmit(event)" class="space-y-3">
+                <input type="hidden" id="tx-id">
+                <div>
+                    <label class="block text-xs font-semibold mb-1" id="lbl-amount">পরিমাণ (BDT ৳)</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-2.5 text-lg font-bold text-slate-400">৳</span>
+                        <input type="number" step="0.01" id="tx-amount" required placeholder="0.00" class="w-full text-2xl font-bold font-mono pl-8 pr-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div id="field-category-wrapper">
+                    <label class="block text-xs font-semibold mb-1" id="lbl-category">ক্যাটাগরি</label>
+                    <select id="tx-category" class="w-full p-2.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl"></select>
+                </div>
+
+                <div id="wallet-select-standard">
+                    <label class="block text-xs font-semibold mb-1" id="lbl-wallet">ওয়ালেট / পেমেন্ট মেথড</label>
+                    <select id="tx-wallet" class="w-full p-2.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl">
+                        <option value="cash">নগদ (Cash)</option>
+                        <option value="bkash">বিকাশ (bKash)</option>
+                        <option value="nagad">নগদ (Nagad)</option>
+                        <option value="rocket">রকেট (Rocket)</option>
+                        <option value="bank">ব্যাংক (Bank)</option>
+                    </select>
+                </div>
+
+                <div id="wallet-select-transfer" class="grid grid-cols-2 gap-2 hidden">
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">কোথা হতে (From)</label>
+                        <select id="tx-from-wallet" class="w-full p-2 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl">
+                            <option value="cash">নগদ (Cash)</option>
+                            <option value="bkash">বিকাশ (bKash)</option>
+                            <option value="nagad">নগদ (Nagad)</option>
+                            <option value="rocket">রকেট (Rocket)</option>
+                            <option value="bank">ব্যাংক (Bank)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">কোথায় (To)</label>
+                        <select id="tx-to-wallet" class="w-full p-2 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl">
+                            <option value="bkash">বিকাশ (bKash)</option>
+                            <option value="cash">নগদ (Cash)</option>
+                            <option value="nagad">নগদ (Nagad)</option>
+                            <option value="rocket">রকেট (Rocket)</option>
+                            <option value="bank">ব্যাংক (Bank)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs font-semibold mb-1" id="lbl-date">তারিখ</label>
+                        <input type="date" id="tx-date" required class="w-full p-2 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold mb-1" id="lbl-time">সময়</label>
+                        <input type="time" id="tx-time" required class="w-full p-2 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold mb-1" id="lbl-note">নোট (ঐচ্ছিক)</label>
+                    <input type="text" id="tx-note" placeholder="যেমন: দুপুরের খাবার, মেসে খরচ..." class="w-full p-2 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl">
+                </div>
+
+                <button type="submit" id="tx-submit-btn" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl transition touch-active shadow-md">
+                    সংরক্ষণ করুন
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 2: BALANCE SETUP -->
+    <div id="modal-setup" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
+        <div class="bg-white dark:bg-slate-800 w-full max-w-md rounded-t-2xl sm:rounded-2xl max-h-[90vh] overflow-y-auto p-5 space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-700 pb-3">
+                <h3 class="text-base font-bold text-slate-800 dark:text-white" id="txt-setup-header">প্রারম্ভিক ব্যালেন্স সেটআপ</h3>
+                <button onclick="closeModal('modal-setup')" class="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <form onsubmit="handleSetupSubmit(event)" class="space-y-3 text-xs">
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block font-medium mb-1">নগদ টাকা (Cash)</label>
+                        <input type="number" step="0.01" id="init-cash" required class="w-full p-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg font-mono">
+                    </div>
+                    <div>
+                        <label class="block font-medium mb-1">বিকাশ (bKash)</label>
+                        <input type="number" step="0.01" id="init-bkash" required class="w-full p-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg font-mono">
+                    </div>
+                    <div>
+                        <label class="block font-medium mb-1">নগদ (Nagad)</label>
+                        <input type="number" step="0.01" id="init-nagad" required class="w-full p-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg font-mono">
+                    </div>
+                    <div>
+                        <label class="block font-medium mb-1">রকেট (Rocket)</label>
+                        <input type="number" step="0.01" id="init-rocket" required class="w-full p-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg font-mono">
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-medium mb-1">ব্যাংক অ্যাকাউন্ট (Bank)</label>
+                    <input type="number" step="0.01" id="init-bank" required class="w-full p-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg font-mono">
+                </div>
+                <div class="pt-2 border-t border-slate-100 dark:border-slate-700">
+                    <label class="block font-medium mb-1">দৈনিক খরচের বাজেট (৳)</label>
+                    <input type="number" step="0.01" id="init-daily-limit" required class="w-full p-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg font-mono">
+                </div>
+                <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition touch-active">
+                    সেভ করুন
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 3: SAVINGS GOAL -->
+    <div id="modal-goal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
+        <div class="bg-white dark:bg-slate-800 w-full max-w-md rounded-t-2xl sm:rounded-2xl p-5 space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-700 pb-3">
+                <h3 class="text-base font-bold text-slate-800 dark:text-white" id="txt-goal-modal-title">সঞ্চয় লক্ষ্য নির্ধারণ</h3>
+                <button onclick="closeModal('modal-goal')" class="p-1 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <form onsubmit="handleGoalSubmit(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-medium mb-1">লক্ষ্যের নাম</label>
+                    <input type="text" id="goal-title" required class="w-full p-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block font-medium mb-1">টার্গেট পরিমাণ (৳)</label>
+                        <input type="number" id="goal-target" required class="w-full p-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg font-mono">
+                    </div>
+                    <div>
+                        <label class="block font-medium mb-1">বর্তমান জমানো (৳)</label>
+                        <input type="number" id="goal-current" required class="w-full p-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg font-mono">
+                    </div>
+                </div>
+                <button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition">সেভ করুন</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT APPLICATION CORE -->
+    <script>
+        const CATEGORIES = {
+            expense: [
+                { id: 'food', bn: 'খাবার ও নাস্তা', en: 'Food & Snacks', icon: 'utensils' },
+                { id: 'transport', bn: 'যাতায়াত', en: 'Transport', icon: 'bus' },
+                { id: 'education', bn: 'পড়াশোনা ও বই', en: 'Education & Books', icon: 'book-open' },
+                { id: 'internet', bn: 'মোবাইল ও ইন্টারনেট', en: 'Mobile & Internet', icon: 'wifi' },
+                { id: 'personal', bn: 'ব্যক্তিগত প্রয়োজন', en: 'Personal Needs', icon: 'user' },
+                { id: 'health', bn: 'স্বাস্থ্য ও ওষুধ', en: 'Health & Medicine', icon: 'activity' },
+                { id: 'rent', bn: 'থাকা ও বাসা', en: 'Rent & Housing', icon: 'home' },
+                { id: 'clothes', bn: 'কাপড়চোপড়', en: 'Clothing', icon: 'shopping-bag' },
+                { id: 'family', bn: 'পরিবারকে দেওয়া', en: 'Family Support', icon: 'heart' },
+                { id: 'other_exp', bn: 'অন্যান্য খরচ', en: 'Other Expense', icon: 'more-horizontal' }
+            ],
+            income: [
+                { id: 'family_inc', bn: 'পরিবারের কাছ থেকে', en: 'From Family', icon: 'heart-handshake' },
+                { id: 'savings_inc', bn: 'নিজের সঞ্চয় থেকে', en: 'From Savings', icon: 'piggy-bank' },
+                { id: 'job_inc', bn: 'কাজের আয়', en: 'Job/Tuition Income', icon: 'briefcase' },
+                { id: 'gift_inc', bn: 'উপহার', en: 'Gift', icon: 'gift' },
+                { id: 'other_inc', bn: 'অন্যান্য আয়', en: 'Other Income', icon: 'plus-circle' }
+            ]
+        };
+
+        const WALLET_NAMES = {
+            cash: { bn: 'নগদ টাকা', en: 'Cash in Hand' },
+            bkash: { bn: 'বিকাশ', en: 'bKash' },
+            nagad: { bn: 'নগদ অ্যাপ', en: 'Nagad' },
+            rocket: { bn: 'রকেট', en: 'Rocket' },
+            bank: { bn: 'ব্যাংক', en: 'Bank Account' }
+        };
+
+        let state = {
+            lang: 'bn',
+            theme: 'light',
+            hideBalance: false,
+            settings: { userName: 'শিক্ষার্থী', dailyLimit: 300, monthlyLimit: 9000 },
+            openingBalances: { cash: 1000, bkash: 500, nagad: 0, rocket: 0, bank: 0 },
+            transactions: [],
+            savingsGoals: [{ id: '1', title: 'পরীক্ষার ফি ও বই', target: 2000, current: 800 }]
+        };
+
+        let currentTxType = 'expense';
+        let categoryChartInstance = null;
+
+        function loadState() {
+            const saved = localStorage.getItem('hishabpro_data_v1');
+            if (saved) {
+                try { state = JSON.parse(saved); } catch(e) { console.error(e); }
+            } else {
+                state.transactions = getSampleTransactions();
+                saveState();
+            }
+        }
+
+        function saveState() {
+            localStorage.setItem('hishabpro_data_v1', JSON.stringify(state));
+        }
+
+        function getSampleTransactions() {
+            const today = new Date().toISOString().split('T')[0];
+            return [
+                { id: 'sample-1', type: 'income', amount: 5000, category: 'family_inc', wallet: 'bkash', date: today, time: '10:00', note: 'মাসিক হাতখরচ' },
+                { id: 'sample-2', type: 'expense', amount: 120, category: 'food', wallet: 'cash', date: today, time: '13:30', note: 'দুপুরের খাবার' }
+            ];
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadState();
+            applyTheme();
+            updateHeaderDate();
+            renderAllViews();
+            lucide.createIcons();
+        });
+
+        function renderAllViews() {
+            renderDashboard();
+            renderTransactions();
+            renderReports();
+            renderSettings();
+            updateLanguageUI();
+        }
+
+        function updateHeaderDate() {
+            const now = new Date();
+            document.getElementById('header-date').innerText = now.toLocaleDateString(state.lang === 'bn' ? 'bn-BD' : 'en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
+        function toggleLanguage() {
+            state.lang = state.lang === 'bn' ? 'en' : 'bn';
+            saveState();
+            updateHeaderDate();
+            updateLanguageUI();
+            renderAllViews();
+        }
+
+        function updateLanguageUI() {
+            const isBn = state.lang === 'bn';
+            document.getElementById('lang-btn-text').innerText = isBn ? 'English' : 'বাংলা';
+            document.getElementById('txt-greeting').innerText = isBn ? 'আসসালামু আলাইকুম' : 'Welcome Back';
+            document.getElementById('txt-balance-setup').innerText = isBn ? 'ব্যালেন্স সেটআপ' : 'Setup Balance';
+            document.getElementById('txt-current-balance').innerText = isBn ? 'বর্তমান ব্যালেন্স' : 'CURRENT BALANCE';
+            document.getElementById('txt-total-income').innerText = isBn ? 'মোট আয়' : 'Total Income';
+            document.getElementById('txt-total-expense').innerText = isBn ? 'মোট খরচ' : 'Total Expense';
+            document.getElementById('txt-today-expense').innerText = isBn ? 'আজকের খরচ' : 'Today Expense';
+            document.getElementById('txt-btn-quick-expense').innerText = isBn ? 'খরচ যোগ করুন' : 'Add Expense';
+            document.getElementById('txt-btn-quick-income').innerText = isBn ? 'আয় যোগ করুন' : 'Add Income';
+            document.getElementById('txt-daily-limit-title').innerText = isBn ? 'আজকের খরচের সীমা' : 'Daily Spending Limit';
+            document.getElementById('txt-wallets-header').innerText = isBn ? 'ওয়ালেট ব্যালেন্স' : 'WALLET BALANCES';
+            document.getElementById('txt-btn-transfer').innerText = isBn ? 'টাকা স্থানান্তর' : 'Transfer';
+            document.getElementById('txt-recent-txns').innerText = isBn ? 'সাম্প্রতিক লেনদেন' : 'Recent Transactions';
+            document.getElementById('txt-see-all').innerText = isBn ? 'সব দেখুন' : 'See All';
+            document.getElementById('nav-txt-home').innerText = isBn ? 'হোম' : 'Home';
+            document.getElementById('nav-txt-ledger').innerText = isBn ? 'হিসাব' : 'Ledger';
+            document.getElementById('nav-txt-reports').innerText = isBn ? 'রিপোর্ট' : 'Reports';
+            document.getElementById('nav-txt-settings').innerText = isBn ? 'সেটিংস' : 'Settings';
+        }
+
+        function toggleDarkMode() {
+            state.theme = state.theme === 'dark' ? 'light' : 'dark';
+            saveState();
+            applyTheme();
+        }
+
+        function applyTheme() {
+            if (state.theme === 'dark') document.documentElement.classList.add('dark');
+            else document.documentElement.classList.remove('dark');
+        }
+
+        function calculateBalances() {
+            let walletTotals = { ...state.openingBalances };
+            let totalIncome = 0, totalExpense = 0, todayExpense = 0;
+            const todayStr = new Date().toISOString().split('T')[0];
+
+            state.transactions.forEach(tx => {
+                const amt = parseFloat(tx.amount) || 0;
+                if (tx.type === 'income') {
+                    totalIncome += amt;
+                    if (walletTotals[tx.wallet] !== undefined) walletTotals[tx.wallet] += amt;
+                } else if (tx.type === 'expense') {
+                    totalExpense += amt;
+                    if (walletTotals[tx.wallet] !== undefined) walletTotals[tx.wallet] -= amt;
+                    if (tx.date === todayStr) todayExpense += amt;
+                } else if (tx.type === 'transfer') {
+                    if (walletTotals[tx.fromWallet] !== undefined) walletTotals[tx.fromWallet] -= amt;
+                    if (walletTotals[tx.toWallet] !== undefined) walletTotals[tx.toWallet] += amt;
+                }
+            });
+
+            const netOpening = Object.values(state.openingBalances).reduce((a, b) => a + b, 0);
+            const netBalance = netOpening + totalIncome - totalExpense;
+            return { netBalance, totalIncome, totalExpense, todayExpense, walletTotals };
+        }
+
+        function formatCurrency(num) {
+            if (state.hideBalance) return '৳ ••••';
+            return '৳ ' + Number(num).toLocaleString(state.lang === 'bn' ? 'bn-BD' : 'en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+        }
+
+        function toggleHideBalance() {
+            state.hideBalance = !state.hideBalance;
+            saveState();
+            renderDashboard();
+        }
+
+        function switchTab(viewId) {
+            ['dashboard', 'transactions', 'reports', 'settings'].forEach(id => {
+                document.getElementById(`view-${id}`).classList.add('hidden');
+                document.getElementById(`nav-${id}`).className = "flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 touch-active";
+            });
+            document.getElementById(`view-${viewId}`).classList.remove('hidden');
+            document.getElementById(`nav-${viewId}`).className = "flex flex-col items-center justify-center text-blue-600 dark:text-blue-400 touch-active font-semibold";
+            if (viewId === 'reports') renderReports();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderDashboard() {
+            const { netBalance, totalIncome, totalExpense, todayExpense, walletTotals } = calculateBalances();
+            document.getElementById('user-display-name').innerText = state.settings.userName || 'শিক্ষার্থী';
+            document.getElementById('dash-net-balance').innerText = formatCurrency(netBalance);
+            document.getElementById('dash-total-income').innerText = formatCurrency(totalIncome);
+            document.getElementById('dash-total-expense').innerText = formatCurrency(totalExpense);
+            document.getElementById('dash-today-expense').innerText = formatCurrency(todayExpense);
+
+            const limit = state.settings.dailyLimit || 300;
+            const pct = Math.min(100, Math.round((todayExpense / limit) * 100));
+            document.getElementById('dash-daily-budget-text').innerText = `${formatCurrency(todayExpense)} / ${formatCurrency(limit)}`;
+            const bar = document.getElementById('dash-daily-budget-bar');
+            bar.style.width = `${pct}%`;
+            bar.className = `h-full transition-all duration-300 ${pct >= 100 ? 'bg-red-500' : pct >= 70 ? 'bg-amber-500' : 'bg-blue-500'}`;
+            
+            document.getElementById('dash-daily-remaining-text').innerHTML = `
+                <span>${state.lang === 'bn' ? 'অবশিষ্ট:' : 'Remaining:'} ${formatCurrency(Math.max(0, limit - todayExpense))}</span>
+                <span>${pct}% used</span>
+            `;
+
+            renderBudgetAlerts(pct);
+
+            document.getElementById('wallet-cards-grid').innerHTML = Object.keys(WALLET_NAMES).map(key => `
+                <div class="bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-200/80 dark:border-slate-700 flex justify-between items-center">
+                    <div>
+                        <p class="text-[11px] text-slate-400">${WALLET_NAMES[key][state.lang]}</p>
+                        <p class="text-xs font-bold font-mono mt-0.5">${formatCurrency(walletTotals[key])}</p>
+                    </div>
+                    <div class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-500 text-xs">৳</div>
+                </div>
+            `).join('');
+
+            const sorted = [...state.transactions].sort((a,b) => new Date(b.date + 'T' + b.time) - new Date(a.date + 'T' + a.time)).slice(0, 4);
+            document.getElementById('dashboard-recent-list').innerHTML = sorted.length === 0 ? `<p class="text-xs text-center text-slate-400 py-3">কোন লেনদেন নেই</p>` : sorted.map(tx => renderTxRowHTML(tx)).join('');
+            lucide.createIcons();
+        }
+
+        function renderBudgetAlerts(pct) {
+            const container = document.getElementById('budget-alerts-container');
+            if (pct >= 100) {
+                container.innerHTML = `<div class="p-3 bg-red-500/10 border border-red-500/30 text-red-600 rounded-xl text-xs flex items-center gap-2"><i data-lucide="alert-triangle" class="w-4 h-4"></i><span>সতর্কবার্তা! আপনি আপনার দৈনিক খরচের সীমা অতিক্রম করেছেন।</span></div>`;
+            } else if (pct >= 70) {
+                container.innerHTML = `<div class="p-3 bg-amber-500/10 border border-amber-500/30 text-amber-600 rounded-xl text-xs flex items-center gap-2"><i data-lucide="alert-circle" class="w-4 h-4"></i><span>আপনি দৈনিক বাজেটের ৭০% এর বেশি খরচ করেছেন।</span></div>`;
+            } else { container.innerHTML = ''; }
+        }
+
+        function renderTxRowHTML(tx) {
+            const isExp = tx.type === 'expense', isInc = tx.type === 'income';
+            const catObj = [...CATEGORIES.expense, ...CATEGORIES.income].find(c => c.id === tx.category);
+            const title = tx.type === 'transfer' ? `স্থানান্তর: ${WALLET_NAMES[tx.fromWallet][state.lang]} → ${WALLET_NAMES[tx.toWallet][state.lang]}` : (catObj ? catObj[state.lang] : tx.category);
+            return `
+                <div class="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-9 h-9 rounded-xl ${isExp ? 'bg-red-50 text-red-500' : isInc ? 'bg-emerald-50 text-emerald-500' : 'bg-blue-50 text-blue-500'} flex items-center justify-center">
+                            <i data-lucide="${isExp ? (catObj?.icon || 'arrow-down-right') : isInc ? 'arrow-up-right' : 'arrow-left-right'}" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold">${title}</p>
+                            <p class="text-[10px] text-slate-400">${tx.date} • ${tx.note || WALLET_NAMES[tx.wallet]?.[state.lang] || ''}</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-xs font-bold font-mono ${isExp ? 'text-red-500' : isInc ? 'text-emerald-500' : 'text-blue-500'}">${isExp ? '-' : isInc ? '+' : ''}৳${tx.amount}</p>
+                        <div class="flex gap-1 justify-end mt-1">
+                            <button onclick="editTx('${tx.id}')" class="text-[10px] text-blue-500 hover:underline">Edit</button>
+                            <button onclick="deleteTx('${tx.id}')" class="text-[10px] text-red-400 hover:underline">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderTransactions() {
+            const query = document.getElementById('tx-search-input')?.value.toLowerCase() || '';
+            const dateFilter = document.getElementById('tx-filter-date')?.value || 'all';
+            const typeFilter = document.getElementById('tx-filter-type')?.value || 'all';
+            const walletFilter = document.getElementById('tx-filter-wallet')?.value || 'all';
+            const sortOrder = document.getElementById('tx-sort-order')?.value || 'newest';
+
+            let list = [...state.transactions];
+            if (query) list = list.filter(t => (t.note && t.note.toLowerCase().includes(query)) || t.amount.toString().includes(query));
+            if (typeFilter !== 'all') list = list.filter(t => t.type === typeFilter);
+            if (walletFilter !== 'all') list = list.filter(t => t.wallet === walletFilter || t.fromWallet === walletFilter || t.toWallet === walletFilter);
+            
+            const todayStr = new Date().toISOString().split('T')[0];
+            if (dateFilter === 'today') list = list.filter(t => t.date === todayStr);
+            else if (dateFilter === 'yesterday') {
+                const yest = new Date(); yest.setDate(yest.getDate() - 1);
+                list = list.filter(t => t.date === yest.toISOString().split('T')[0]);
+            } else if (dateFilter === 'month') list = list.filter(t => t.date.startsWith(todayStr.substring(0, 7)));
+
+            list.sort((a, b) => {
+                if (sortOrder === 'newest') return new Date(b.date + 'T' + b.time) - new Date(a.date + 'T' + a.time);
+                if (sortOrder === 'oldest') return new Date(a.date + 'T' + a.time) - new Date(b.date + 'T' + b.time);
+                if (sortOrder === 'highest') return b.amount - a.amount;
+                if (sortOrder === 'lowest') return a.amount - b.amount;
+            });
+
+            document.getElementById('tx-count-badge').innerText = `${list.length} টি`;
+            document.getElementById('tx-ledger-list').innerHTML = list.length === 0 ? `<div class="bg-white dark:bg-slate-800 p-8 rounded-xl text-center text-slate-400 text-xs">কোন লেনদেন পাওয়া যায়নি</div>` : list.map(tx => renderTxRowHTML(tx)).join('');
+            lucide.createIcons();
+        }
+
+        function renderReports() {
+            const period = document.getElementById('report-period')?.value || 'this-month';
+            const nowStr = new Date().toISOString().split('T')[0].substring(0, 7);
+            let filtered = period === 'this-month' ? state.transactions.filter(t => t.date.startsWith(nowStr)) : state.transactions;
+
+            let expTotal = 0, incTotal = 0, catMap = {}, walletMap = {};
+            filtered.forEach(t => {
+                const amt = parseFloat(t.amount) || 0;
+                if (t.type === 'expense') { expTotal += amt; catMap[t.category] = (catMap[t.category] || 0) + amt; walletMap[t.wallet] = (walletMap[t.wallet] || 0) + amt; }
+                else if (t.type === 'income') { incTotal += amt; }
+            });
+
+            const netFlow = incTotal - expTotal;
+            document.getElementById('rep-net-flow').innerText = `৳ ${netFlow}`;
+            document.getElementById('rep-net-flow').className = `text-sm font-bold font-mono mt-0.5 ${netFlow >= 0 ? 'text-emerald-500' : 'text-red-500'}`;
+            document.getElementById('rep-daily-avg').innerText = `৳ ${(expTotal / new Date().getDate()).toFixed(0)}`;
+
+            document.getElementById('rep-wallet-breakdown').innerHTML = Object.keys(WALLET_NAMES).map(k => {
+                const spent = walletMap[k] || 0, pct = expTotal > 0 ? Math.round((spent / expTotal) * 100) : 0;
+                return `<div><div class="flex justify-between mb-1"><span>${WALLET_NAMES[k][state.lang]}</span><span class="font-mono">৳${spent} (${pct}%)</span></div><div class="w-full bg-slate-100 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden"><div class="bg-blue-500 h-full" style="width: ${pct}%"></div></div></div>`;
+            }).join('');
+
+            renderCategoryDoughnutChart(catMap);
+        }
+
+        function renderCategoryDoughnutChart(catMap) {
+            const ctx = document.getElementById('categoryDoughnutChart')?.getContext('2d');
+            if (!ctx) return;
+            if (categoryChartInstance) categoryChartInstance.destroy();
+
+            const labels = [], data = [], colors = ['#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899', '#6366f1', '#14b8a6'];
+            Object.keys(catMap).forEach(catId => {
+                const catObj = CATEGORIES.expense.find(c => c.id === catId);
+                labels.push(catObj ? catObj[state.lang] : catId);
+                data.push(catMap[catId]);
+            });
+
+            if (data.length === 0) { labels.push('No Expenses'); data.push(1); }
+
+            categoryChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: { labels, datasets: [{ data, backgroundColor: colors, borderWidth: 0 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, cutout: '70%' }
+            });
+
+            document.getElementById('rep-category-legend').innerHTML = labels.map((lbl, idx) => `
+                <div class="flex justify-between items-center text-xs">
+                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full inline-block" style="background-color: ${colors[idx % colors.length]}"></span><span>${lbl}</span></span>
+                    <span class="font-mono font-semibold">৳${data[idx] || 0}</span>
+                </div>
+            `).join('');
+        }
+
+        // ==========================================
+        // DETAILED STATEMENT EXPORT ENGINE (PDF, Print, JPG)
+        // ==========================================
+        function preparePrintableStatement() {
+            const period = document.getElementById('report-period')?.value || 'this-month';
+            const nowStr = new Date().toISOString().split('T')[0].substring(0, 7);
+            let filtered = period === 'this-month' ? state.transactions.filter(t => t.date.startsWith(nowStr)) : [...state.transactions];
+
+            filtered.sort((a,b) => new Date(b.date + 'T' + b.time) - new Date(a.date + 'T' + a.time));
+
+            let inc = 0, exp = 0;
+            filtered.forEach(t => { if(t.type === 'income') inc += parseFloat(t.amount)||0; if(t.type === 'expense') exp += parseFloat(t.amount)||0; });
+
+            document.getElementById('stmt-user-name').innerText = `ব্যবহারকারী: ${state.settings.userName}`;
+            document.getElementById('stmt-date-range').innerText = `সময়কাল: ${period === 'this-month' ? 'চলতি মাস (' + nowStr + ')' : 'সর্বমোট'}`;
+            document.getElementById('stmt-total-inc').innerText = `৳ ${inc}`;
+            document.getElementById('stmt-total-exp').innerText = `৳ ${exp}`;
+            document.getElementById('stmt-net-bal').innerText = `৳ ${inc - exp}`;
+
+            const tbody = document.getElementById('stmt-table-body');
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">কোন লেনদেন পাওয়া যায়নি</td></tr>`;
+            } else {
+                tbody.innerHTML = filtered.map(t => {
+                    const catObj = [...CATEGORIES.expense, ...CATEGORIES.income].find(c => c.id === t.category);
+                    const catName = t.type === 'transfer' ? 'টাকা স্থানান্তর' : (catObj ? catObj.bn : t.category);
+                    return `
+                        <tr class="border-b">
+                            <td class="p-2">${t.date} ${t.time}</td>
+                            <td class="p-2 font-semibold ${t.type==='expense'?'text-red-600':t.type==='income'?'text-emerald-600':'text-blue-600'}">${t.type==='expense'?'খরচ':t.type==='income'?'আয়':'স্থানান্তর'}</td>
+                            <td class="p-2">${catName} (${WALLET_NAMES[t.wallet||t.fromWallet]?.bn || ''})</td>
+                            <td class="p-2">${t.note || '-'}</td>
+                            <td class="p-2 text-right font-mono font-bold">৳${t.amount}</td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+        }
+
+        function printStatement() {
+            preparePrintableStatement();
+            const content = document.getElementById('printable-statement').innerHTML;
+            const printWin = window.open('', '_blank');
+            printWin.document.write(`<html><head><title>HishabPro Statement</title><script src="https://cdn.tailwindcss.com"><\/script></head><body class="bg-white p-6">${content}</body></html>`);
+            printWin.document.close();
+            setTimeout(() => { printWin.print(); printWin.close(); }, 500);
+        }
+
+        async function downloadStatementPDF() {
+            preparePrintableStatement();
+            const el = document.getElementById('printable-statement');
+            el.classList.remove('hidden');
+            const canvas = await html2canvas(el, { scale: 2 });
+            el.classList.add('hidden');
+
+            const imgData = canvas.toDataURL('image/png');
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const imgWidth = 190;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            
+            pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
+            pdf.save(`HishabPro_Statement_${new Date().toISOString().split('T')[0]}.pdf`);
+        }
+
+        async function downloadStatementJPG() {
+            preparePrintableStatement();
+            const el = document.getElementById('printable-statement');
+            el.classList.remove('hidden');
+            const canvas = await html2canvas(el, { scale: 2 });
+            el.classList.add('hidden');
+
+            const link = document.createElement('a');
+            link.download = `HishabPro_Statement_${new Date().toISOString().split('T')[0]}.jpg`;
+            link.href = canvas.toDataURL('image/jpeg', 0.9);
+            link.click();
+        }
+
+        function renderSettings() {
+            document.getElementById('cfg-user-name').value = state.settings.userName;
+            document.getElementById('cfg-daily-limit').value = state.settings.dailyLimit;
+            document.getElementById('cfg-monthly-limit').value = state.settings.monthlyLimit;
+
+            document.getElementById('savings-goals-list').innerHTML = state.savingsGoals.length === 0 ? `<p class="text-xs text-slate-400 py-2">কোন লক্ষ্য যুক্ত করা হয়নি</p>` : state.savingsGoals.map(g => {
+                const pct = Math.min(100, Math.round((g.current / g.target) * 100));
+                return `<div class="bg-slate-50 dark:bg-slate-900 p-3 rounded-xl border dark:border-slate-700 space-y-1 text-xs"><div class="flex justify-between font-semibold"><span>${g.title}</span><span class="font-mono text-emerald-500">৳${g.current} / ৳${g.target}</span></div><div class="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden"><div class="bg-emerald-500 h-full" style="width: ${pct}%"></div></div><div class="flex justify-between text-[10px] text-slate-400"><span>${pct}% complete</span><button onclick="deleteGoal('${g.id}')" class="text-red-400 hover:underline">Delete</button></div></div>`;
+            }).join('');
+        }
+
+        function saveSettings() {
+            state.settings.userName = document.getElementById('cfg-user-name').value || 'শিক্ষার্থী';
+            state.settings.dailyLimit = parseFloat(document.getElementById('cfg-daily-limit').value) || 300;
+            state.settings.monthlyLimit = parseFloat(document.getElementById('cfg-monthly-limit').value) || 9000;
+            saveState();
+            renderAllViews();
+            alert('সেটিংস সফলভাবে সংরক্ষিত হয়েছে!');
+        }
+
+        function openAddModal(type = 'expense') {
+            setTxType(type);
+            document.getElementById('tx-id').value = '';
+            document.getElementById('tx-amount').value = '';
+            document.getElementById('tx-note').value = '';
+            const now = new Date();
+            document.getElementById('tx-date').value = now.toISOString().split('T')[0];
+            document.getElementById('tx-time').value = now.toTimeString().substring(0, 5);
+            document.getElementById('modal-tx').classList.remove('hidden');
+        }
+
+        function setTxType(type) {
+            currentTxType = type;
+            ['expense', 'income', 'transfer'].forEach(t => {
+                document.getElementById(`type-btn-${t}`).className = t === type ? "py-2 rounded-lg bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-sm" : "py-2 rounded-lg text-slate-500";
+            });
+
+            const catWrapper = document.getElementById('field-category-wrapper');
+            const stdWallet = document.getElementById('wallet-select-standard');
+            const trsWallet = document.getElementById('wallet-select-transfer');
+            const catSelect = document.getElementById('tx-category');
+
+            if (type === 'transfer') {
+                catWrapper.classList.add('hidden'); stdWallet.classList.add('hidden'); trsWallet.classList.remove('hidden');
+            } else {
+                catWrapper.classList.remove('hidden'); stdWallet.classList.remove('hidden'); trsWallet.classList.add('hidden');
+                catSelect.innerHTML = (CATEGORIES[type] || []).map(c => `<option value="${c.id}">${c[state.lang]}</option>`).join('');
+            }
+        }
+
+        function handleTxSubmit(e) {
+            e.preventDefault();
+            const id = document.getElementById('tx-id').value || 'tx_' + Date.now();
+            const amount = parseFloat(document.getElementById('tx-amount').value);
+            if (!amount || amount <= 0) { alert('সঠিক পরিমাণ দিন'); return; }
+
+            const newTx = {
+                id, type: currentTxType, amount,
+                date: document.getElementById('tx-date').value,
+                time: document.getElementById('tx-time').value,
+                note: document.getElementById('tx-note').value
+            };
+
+            if (currentTxType === 'transfer') {
+                newTx.fromWallet = document.getElementById('tx-from-wallet').value;
+                newTx.toWallet = document.getElementById('tx-to-wallet').value;
+                if (newTx.fromWallet === newTx.toWallet) { alert('একই ওয়ালেটে স্থানান্তর সম্ভব নয়'); return; }
+            } else {
+                newTx.category = document.getElementById('tx-category').value;
+                newTx.wallet = document.getElementById('tx-wallet').value;
+            }
+
+            const idx = state.transactions.findIndex(t => t.id === id);
+            if (idx > -1) state.transactions[idx] = newTx;
+            else state.transactions.unshift(newTx);
+
+            saveState();
+            closeModal('modal-tx');
+            renderAllViews();
+        }
+
+        function editTx(id) {
+            const tx = state.transactions.find(t => t.id === id);
+            if (!tx) return;
+            openAddModal(tx.type);
+            document.getElementById('tx-id').value = tx.id;
+            document.getElementById('tx-amount').value = tx.amount;
+            document.getElementById('tx-date').value = tx.date;
+            document.getElementById('tx-time').value = tx.time;
+            document.getElementById('tx-note').value = tx.note || '';
+            if (tx.type === 'transfer') {
+                document.getElementById('tx-from-wallet').value = tx.fromWallet;
+                document.getElementById('tx-to-wallet').value = tx.toWallet;
+            } else {
+                document.getElementById('tx-category').value = tx.category;
+                document.getElementById('tx-wallet').value = tx.wallet;
+            }
+        }
+
+        function deleteTx(id) {
+            if (confirm('লেনদেনটি মুছে ফেলতে চান?')) {
+                state.transactions = state.transactions.filter(t => t.id !== id);
+                saveState();
+                renderAllViews();
+            }
+        }
+
+        function openSetupModal() {
+            document.getElementById('init-cash').value = state.openingBalances.cash;
+            document.getElementById('init-bkash').value = state.openingBalances.bkash;
+            document.getElementById('init-nagad').value = state.openingBalances.nagad;
+            document.getElementById('init-rocket').value = state.openingBalances.rocket;
+            document.getElementById('init-bank').value = state.openingBalances.bank;
+            document.getElementById('init-daily-limit').value = state.settings.dailyLimit;
+            document.getElementById('modal-setup').classList.remove('hidden');
+        }
+
+        function handleSetupSubmit(e) {
+            e.preventDefault();
+            state.openingBalances.cash = parseFloat(document.getElementById('init-cash').value) || 0;
+            state.openingBalances.bkash = parseFloat(document.getElementById('init-bkash').value) || 0;
+            state.openingBalances.nagad = parseFloat(document.getElementById('init-nagad').value) || 0;
+            state.openingBalances.rocket = parseFloat(document.getElementById('init-rocket').value) || 0;
+            state.openingBalances.bank = parseFloat(document.getElementById('init-bank').value) || 0;
+            state.settings.dailyLimit = parseFloat(document.getElementById('init-daily-limit').value) || 300;
+            saveState();
+            closeModal('modal-setup');
+            renderAllViews();
+        }
+
+        function openGoalModal() { document.getElementById('modal-goal').classList.remove('hidden'); }
+        function handleGoalSubmit(e) {
+            e.preventDefault();
+            state.savingsGoals.push({
+                id: 'goal_' + Date.now(),
+                title: document.getElementById('goal-title').value,
+                target: parseFloat(document.getElementById('goal-target').value) || 0,
+                current: parseFloat(document.getElementById('goal-current').value) || 0
+            });
+            saveState();
+            closeModal('modal-goal');
+            renderSettings();
+        }
+        function deleteGoal(id) { state.savingsGoals = state.savingsGoals.filter(g => g.id !== id); saveState(); renderSettings(); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        function exportCSV() {
+            let csv = 'ID,Type,Amount,Category,Wallet,Date,Time,Note\n';
+            state.transactions.forEach(t => { csv += `"${t.id}","${t.type}","${t.amount}","${t.category||''}","${t.wallet||''}","${t.date}","${t.time}","${t.note||''}"\n`; });
+            downloadFile(csv, `HishabPro_${new Date().toISOString().split('T')[0]}.csv`, 'text/csv');
+        }
+
+        function exportJSONBackup() {
+            downloadFile(JSON.stringify(state, null, 2), `HishabPro_Backup_${new Date().toISOString().split('T')[0]}.json`, 'application/json');
+        }
+
+        function importJSONBackup(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    state = JSON.parse(e.target.result);
+                    saveState();
+                    renderAllViews();
+                    alert('ব্যাকআপ সফলভাবে রিস্টোর হয়েছে!');
+                } catch(err) { alert('ভুল ব্যাকআপ ফাইল!'); }
+            };
+            reader.readAsText(file);
+        }
+
+        function downloadFile(content, fileName, mimeType) {
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = fileName; a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function loadSampleData() { state.transactions = getSampleTransactions(); saveState(); renderAllViews(); alert('নমুনা ডাটা লোড হয়েছে!'); }
+        function resetAllData() {
+            if (confirm('সব ডাটা মুছে ফেলতে চান?')) {
+                localStorage.removeItem('hishabpro_data_v1');
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html>
